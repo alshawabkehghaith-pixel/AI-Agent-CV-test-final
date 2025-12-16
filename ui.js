@@ -159,7 +159,7 @@ I'm here to help you identify the best learning paths for your team. Follow thes
     enterRule: "أدخل قاعدة عمل...",
     // 12-15-2025 Joud start
     // Save Toggle
-    saveSession: "حفظ الجلسة",
+    saveSession: "حفظ بياناتي",
     // 12-15-2025 Joud end
     // Timeline Text
     estTime: "الوقت التقديري لإكمال الشهادة:",
@@ -2265,6 +2265,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+
 
 
 

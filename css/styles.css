@@ -11,7 +11,7 @@
   --card-bg: #FFFFFF;           /* client --color-primary-bg / neutral-0 */
 
   /* Text & muted text */
-  --text: #1b3f2f;
+  --text: #133727;
   --muted: #7E9196;             /* client --color-gray-600 */
 
   /* Status colors */
@@ -1780,7 +1780,7 @@ input[type="checkbox"]:checked + .toggle-slider::before {
 
 .toggle-text {
   font-size: 0.85rem;
-  color: var(--text);
+  color: white;
 }
 /* 12-15-2025 Joud end */
 /* 15-12-2025 Starting Taif's updates  */
@@ -1842,4 +1842,5 @@ html[lang="ar"] .footer-text {
 }
 
 /* 15-12-2025 Ending Taif's updates  */
+
 

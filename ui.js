@@ -1957,7 +1957,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       setButtonLoading(generateBtn, true);
       recommendationsContainer.innerHTML = "";
       resultsSection.classList.remove("hidden");
-      resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // NOTE: no automatic scrolling here; user controls page scroll
 
       //Ghaith's change start - remove empty business rule inputs before generating
       const rulesContainer = document.getElementById("rules-container");

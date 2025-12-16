@@ -11,7 +11,7 @@
   --card-bg: #FFFFFF;           /* client --color-primary-bg / neutral-0 */
 
   /* Text & muted text */
-  --text: #1B8354;
+  --text: #1b3f2f;
   --muted: #7E9196;             /* client --color-gray-600 */
 
   /* Status colors */
@@ -1842,3 +1842,4 @@ html[lang="ar"] .footer-text {
 }
 
 /* 15-12-2025 Ending Taif's updates  */
+

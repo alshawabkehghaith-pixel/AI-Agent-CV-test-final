@@ -1831,45 +1831,77 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       let accumulatedText = "";
-      // 16-12-2025 Ghaith's Change Start - track if any non-empty content was received
+      // Track if any non-empty content was received
       let hasContent = false;
-      // 16-12-2025 Ghaith's Change End
+      // Track if we've done the initial scroll adjustment
+      let hasPerformedInitialScroll = false;
 
       await callGeminiProxyStream(
         proxyPayload,
         (chunk) => {
           accumulatedText += chunk;
           if (botMessageDiv) {
-            // 16-12-2025 Ghaith's Change Start - first real chunk: show bubble, hide typing, scroll once (show more of answer)
+            // First real chunk: show bubble, hide typing, perform initial scroll adjustment
             if (!hasContent && accumulatedText.trim()) {
               hasContent = true;
               botMessageDiv.style.display = "";
               hideTypingIndicator();
-              // Single auto-scroll on first visible chunk only
-              // Prefer scrolling the actual bubble into view near the top so more text is visible
-              if (typeof botMessageDiv.scrollIntoView === "function") {
-                botMessageDiv.scrollIntoView({
-                  behavior: "smooth",
-                  block: "start",
-                });
-              } else if (chatMessages) {
-                chatMessages.scrollTop = chatMessages.scrollHeight;
+              
+              // Render the first chunk content so we can measure it
+              if (typeof marked !== "undefined") {
+                botMessageDiv.innerHTML = marked.parse(accumulatedText);
+              } else {
+                botMessageDiv.innerHTML = accumulatedText.replace(/\n/g, "<br>");
               }
-            }
-
-            if (hasContent) {
-              // Render with markdown if available, otherwise fallback to simple line breaks
+              
+              // Perform a single initial scroll adjustment to maximize visibility of the first chunk
+              // Use requestAnimationFrame to ensure DOM has updated and measurements are accurate
+              if (!hasPerformedInitialScroll && chatMessages) {
+                hasPerformedInitialScroll = true;
+                requestAnimationFrame(() => {
+                  const container = chatMessages;
+                  const bubble = botMessageDiv;
+                  
+                  if (!container || !bubble) return;
+                  
+                  // Get bubble's position within the scrollable container
+                  const bubbleTop = bubble.offsetTop;
+                  const bubbleHeight = bubble.offsetHeight;
+                  const containerHeight = container.clientHeight;
+                  const currentScrollTop = container.scrollTop;
+                  
+                  // Calculate how much of the bubble is currently visible
+                  const bubbleBottom = bubbleTop + bubbleHeight;
+                  const visibleTop = Math.max(0, bubbleTop - currentScrollTop);
+                  const visibleBottom = Math.min(containerHeight, bubbleBottom - currentScrollTop);
+                  const currentlyVisible = Math.max(0, visibleBottom - visibleTop);
+                  
+                  // Determine if we need to scroll to improve visibility
+                  // We want to maximize visible content by positioning the bubble near the top
+                  // of the viewport, but leave a small margin for visual spacing
+                  const needsScroll = 
+                    bubbleTop < currentScrollTop || // Bubble is above viewport
+                    currentlyVisible < Math.min(bubbleHeight, containerHeight * 0.5); // Less than half visible
+                  
+                  if (needsScroll) {
+                    // Position bubble near the top of viewport to maximize visible lines
+                    // Use a small margin (20px) to leave some visual breathing room
+                    const targetMargin = 20;
+                    const optimalScrollTop = Math.max(0, bubbleTop - targetMargin);
+                    
+                    // Smooth scroll to the optimal position
+                    container.scrollTop = optimalScrollTop;
+                  }
+                });
+              }
+            } else if (hasContent) {
+              // Subsequent chunks: just update content without changing scroll position
               if (typeof marked !== "undefined") {
                 botMessageDiv.innerHTML = marked.parse(accumulatedText);
               } else {
                 botMessageDiv.innerHTML = accumulatedText.replace(/\n/g, "<br>");
               }
             }
-            // 16-12-2025 Ghaith's Change End
-            // 16-12-2025 Ghaith's Change - delete these (further auto-scroll on streaming chunks)
-            // if (chatMessages) {
-            //   chatMessages.scrollTop = chatMessages.scrollHeight;
-            // }
           }
         },
         () => {

@@ -1,23 +1,22 @@
 :root{
   /* === COLOR TOKENS – TEAM'S CLIENT PALETTE === */
   /* Primary brand (used for buttons, chat bubbles, header gradient) */
-  --primary: #15878A;           /* client --color-primary */
-  --primary-600: #007D89;       /* client --color-brand-700 / brand-solid */
-
+  --primary: #074D31;
+  --primary-600: #074D31;
   /* Secondary / accent color (used for accent borders, highlights, etc.) */
-  --secondary: #CFB586;         /* client --color-accent / yellow-alt */
+  --secondary: #DF7C2E;
 
   /* Backgrounds & surfaces */
   --bg: #F5F8FA;                /* client --color-secondary-bg */
   --card-bg: #FFFFFF;           /* client --color-primary-bg / neutral-0 */
 
   /* Text & muted text */
-  --text: #023B42;              /* client --color-gray-900 / color-brand-50 */
+  --text: #1B8354;
   --muted: #7E9196;             /* client --color-gray-600 */
 
   /* Status colors */
-  --success: #337751;           /* client --color-success */
-  --danger: #CC0F33;            /* client --color-error */
+  --success: #1B8354; /* client --color-success */
+  --danger: #B6381F;
 
   /* spacing scale */
   --space-xxs: 6px;
@@ -580,7 +579,7 @@ html[lang="ar"] .cv-modal .cv-close-btn {
  }
 
 .pdf-header {
-  background: linear-gradient(90deg, #15878A, #007D89);
+background: linear-gradient(90deg,var(#074D31), var(#074D31));
   color: white;
   padding: 24px;
   border-radius: 12px;
@@ -607,7 +606,7 @@ html[lang="ar"] .cv-modal .cv-close-btn {
   font-size: 1.25rem;
   font-weight: 600;
   margin: 0 0 24px 0;
-  color: #15878A;
+  color: #074D31;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -1784,3 +1783,62 @@ input[type="checkbox"]:checked + .toggle-slider::before {
   color: var(--text);
 }
 /* 12-15-2025 Joud end */
+/* 15-12-2025 Starting Taif's updates  */
+
+.site-footer {
+  background: linear-gradient(90deg, var(--primary), var(--primary-600));
+  color: white;
+  padding: var(--space-l) var(--space-m);
+  margin-top: var(--space-xl);
+  width: 100%;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-s);
+  text-align: center;
+}
+
+.footer-logo {
+  font-size: 2rem;
+  color: white;
+  margin-bottom: var(--space-xs);
+}
+
+.footer-logo i {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.footer-text {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+/* Arabic RTL support */
+html[lang="ar"] .footer-text {
+  direction: rtl;
+}
+
+/* Responsive */
+@media (max-width: 720px) {
+  .site-footer {
+    padding: var(--space-m) var(--space-s);
+  }
+  
+  .footer-logo {
+    font-size: 1.5rem;
+  }
+  
+  .footer-text {
+    font-size: 0.85rem;
+  }
+}
+
+/* 15-12-2025 Ending Taif's updates  */

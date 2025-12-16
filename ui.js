@@ -1914,7 +1914,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
           if (hasContent && accumulatedText.trim()) {
             chatHistory.push({ text: accumulatedText, isUser: false });
-            // --- FIX START: Save immediately after bot finishes replying ---
+            // --- FIX START joud 16-12-2025: Save immediately after bot finishes replying ---
             saveChatHistory(chatHistory);
             // --- FIX END ---
           }
@@ -2257,4 +2257,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+
 

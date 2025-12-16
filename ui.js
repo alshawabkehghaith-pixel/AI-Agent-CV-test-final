@@ -1008,7 +1008,7 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
         //Ghaith's change start - make each card a separate object that won't split across pages
         // Inline styles for safe PDF rendering if external CSS lags
         card.style.paddingBottom = '13px';
-        card.style.padding = '10px';
+        card.style.padding = '13px';
         card.style.borderLeft = isArabic ? 'none' : '4px solid #CFB586';
         card.style.borderRight = isArabic ? '4px solid #CFB586' : 'none';
         card.style.backgroundColor = '#fbfbfc';
@@ -1165,7 +1165,7 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
         card.className = 'pdf-recommendation-card';
         //Ghaith's change start - make each card a separate object that won't split across pages
         card.style.paddingBottom = '13px';
-        card.style.padding = '10px';
+        card.style.padding = '13px';
         card.style.borderLeft = isArabic ? 'none' : '4px solid #CFB586';
         card.style.borderRight = isArabic ? '4px solid #CFB586' : 'none';
         card.style.backgroundColor = '#fbfbfc';
@@ -2248,3 +2248,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+

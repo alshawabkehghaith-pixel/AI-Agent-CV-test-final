@@ -1672,6 +1672,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   
   // 2. Initialize Language FIRST (prevents re-triggering loader on existing data)
   initializeLanguage();
+  // --- FIX START joud 16-12-2025: Move clearChatHistoryDom() HERE ---
+  // Reset chat to welcome message first. If persistence loads history below, it will overwrite this.
+  clearChatHistoryDom(); 
+  // --- FIX END ---
   // 12-15-2025 Joud start
   // 3. Persistence Logic
   if (!isPersistenceEnabled()) {
@@ -1742,7 +1746,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   userRules = [...defaultRulesForLang];
   saveUserRules(userRules);
 
-  clearChatHistoryDom();
+  
   // 12-15-2025 Joud start
   // Setup Persistence Toggle
   const persistenceToggle = document.getElementById("persistence-toggle");
@@ -2261,6 +2265,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+
 
 
 

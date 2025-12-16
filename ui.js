@@ -81,7 +81,7 @@ const UI_TEXT = {
     recommendationsTitle: "Recommendations",
     // 12-15-2025 Joud start
     // Save Toggle
-    saveSession: "Save Session",
+    saveSession: "Keep My Data",
     // 12-15-2025 joud end
     downloadBtn: "Download Recommendations (PDF)",
     welcomeMessage: `As-salamu alaykum! I'm your Training and Certification Assistant.
@@ -2265,6 +2265,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+
 
 
 

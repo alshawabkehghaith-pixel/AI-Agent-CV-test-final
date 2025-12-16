@@ -154,7 +154,7 @@ I'm here to help you identify the best learning paths for your team. Follow thes
   <li><b>إضافة قواعد العمل (اختياري)</b>: حدد معايير أو متطلبات خاصة لتخصيص عملية التحليل.</li>
   <li>اضغط على <b>إصدار التوصيات</b> لعرض النتائج.</li>
 </ul>
-      إذا كنت بحاجة إلى مساعدة، يسعدني مساعدتك!`,
+      إذا كنت بحاجة إلى مساعدة، أنا في خدمتك!`,
     toggleBtnText: "English",
     enterRule: "أدخل قاعدة عمل...",
     // 12-15-2025 Joud start
@@ -2265,6 +2265,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+
 
 
 

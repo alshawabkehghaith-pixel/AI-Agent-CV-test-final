@@ -155,8 +155,9 @@ export function addMessage(text, isUser = false) {
     messageDiv.innerHTML = text.replace(/\n/g, "<br>");
   }
 
+  // Append the message without automatically scrolling the container.
+  // Overall scroll position is controlled explicitly by the chat streaming logic.
   chatMessages.appendChild(messageDiv);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 export function showTypingIndicator() {
@@ -166,10 +167,11 @@ export function showTypingIndicator() {
   const typingDiv = document.createElement("div");
   typingDiv.className = "message bot-message typing-indicator";
   typingDiv.id = "typing-indicator";
-  typingDiv.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+  typingDiv.innerHTML =
+    '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
 
+  // Add the typing indicator without changing scroll position.
   chatMessages.appendChild(typingDiv);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
   return typingDiv;
 }
 

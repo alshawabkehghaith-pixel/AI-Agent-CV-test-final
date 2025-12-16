@@ -84,13 +84,16 @@ const UI_TEXT = {
     saveSession: "Save Session",
     // 12-15-2025 joud end
     downloadBtn: "Download Recommendations (PDF)",
-    welcomeMessage: `Hello! I'm your training and certification assistant. I can help you:
-      <ul>
-        <li>Discuss training programs and certificates</li>
-        <li>Analyze CVs for suitable recommendations</li>
-        <li>Adjust recommendations based on your business rules</li>
-      </ul>
-      How can I help you today?`,
+    welcomeMessage: `As-salamu alaykum! I'm your Training and Certification Assistant.
+I'm here to help you identify the best learning paths for your team. Follow these steps to get started:
+
+      <ol>
+        <li><b>Upload CVs</b>: Begin by uploading the resumes of your candidates.</li>
+        <li><b>Add Business Rules (Optional)</b>: Define specific criteria or requirements to tailor the analysis.</li>
+        <li>click on <b>Generate Recommendations</b> button to see the results.</li>
+      </ol>
+      If you need assistance, I'm pleased to help!`,
+
     toggleBtnText: "العربية",
     enterRule: "Enter a business rule...",
     
@@ -144,13 +147,14 @@ const UI_TEXT = {
     submit: "إرسال",
     recommendationsTitle: "التوصيات",
     downloadBtn: "تحميل التوصيات (PDF)",
-    welcomeMessage: `مرحباً! أنا مساعد التدريب والشهادات الخاص بك. يمكنني مساعدتك في:
+    welcomeMessage: `السّلام عليكم! أنا مساعدك الخاص بالتدريب والشهادات.
+أنا هنا لمساعدتك في تحديد أفضل مسارات التعلم لفريقك. اتبع الخطوات التالية للبدء:
       <ul>
-        <li>مناقشة البرامج التدريبية والشهادات</li>
-        <li>تحليل السيرة الذاتية للحصول على توصيات مناسبة</li>
-        <li>تعديل التوصيات بناءً على قواعد عملك</li>
-      </ul>
-      كيف يمكنني مساعدتك اليوم؟`,
+  <li><b>رفع السير الذاتية</b>: ابدأ برفع السير الذاتية الخاصة بالمرشحين.</li>
+  <li><b>إضافة قواعد العمل (اختياري)</b>: حدد معايير أو متطلبات خاصة لتخصيص عملية التحليل.</li>
+  <li>اضغط على <b>إصدار التوصيات</b> لعرض النتائج.</li>
+</ul>
+      !إذا كنت بحاجة إلى مساعدة، يسعدني مساعدتك`,
     toggleBtnText: "English",
     enterRule: "أدخل قاعدة عمل...",
     // 12-15-2025 Joud start
@@ -2257,5 +2261,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+
 
 

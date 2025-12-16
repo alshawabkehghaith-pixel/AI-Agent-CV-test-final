@@ -1775,7 +1775,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Add user message to the chat UI
     addMessage(message, true);
     chatHistory.push({ text: message, isUser: true });
-
+    // --- FIX START joud 16-12-2025: Save immediately after user sends message ---
+    saveChatHistory(chatHistory);
+    // --- FIX END ---
     userInput.value = "";
     sendButton.disabled = true;
     const typingEl = showTypingIndicator();
@@ -1912,6 +1914,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
           if (hasContent && accumulatedText.trim()) {
             chatHistory.push({ text: accumulatedText, isUser: false });
+            // --- FIX START: Save immediately after bot finishes replying ---
+            saveChatHistory(chatHistory);
+            // --- FIX END ---
           }
           // Typing indicator is already hidden on first chunk if any content exists
           hideTypingIndicator();
@@ -2252,3 +2257,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+

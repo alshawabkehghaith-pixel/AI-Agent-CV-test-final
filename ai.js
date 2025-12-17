@@ -416,7 +416,7 @@ For each CV, provide recommendations in a structured JSON format. The JSON must 
           "certId": "pmp",
           "certName": "Project Management Professional (PMP)",
           "reason": "Clear explanation of why this certification is relevant.",
-          "rulesApplied": ["List of rules that influenced this recommendation"]
+          "rulesApplied": []
         }
       ],
 //Ghaith's change start
@@ -425,7 +425,7 @@ For each CV, provide recommendations in a structured JSON format. The JSON must 
           "courseId": "training_1_...",
           "courseName": "Fundamentals of Entrepreneurship",
           "reason": "Clear explanation of why this training course is relevant.",
-          "rulesApplied": ["List of rules that influenced this recommendation"]
+          "rulesApplied": []
         }
       ]
 //Ghaith's change end
@@ -444,6 +444,7 @@ For each CV, provide recommendations in a structured JSON format. The JSON must 
 //Ghaith's change start
 - If no training courses can be recommended, provide an empty array [] for their "trainingCourses" field.
 //Ghaith's change end
+- rulesApplied field: ONLY include rules from the Business Rules section provided above. DO NOT include internal/system rules (like seniority logic, duplicate prevention, etc.). If no Business Rules apply to a recommendation, use empty array [].
 
 **Example of correct response format:**
 {"candidates":[{"candidateName":"John Doe","recommendations":[],"trainingCourses":[]}]}
@@ -565,7 +566,7 @@ Provide recommendations for this specific candidate in strict JSON format.
       "certId": "pmp",
       "certName": "Project Management Professional (PMP)",
       "reason": "${language === 'ar' ? 'السبب باللغة العربية' : 'Reason in English'}",
-      "rulesApplied": ["Rule 1"]
+      "rulesApplied": []
     }
   ],
   //Ghaith's change start
@@ -574,7 +575,7 @@ Provide recommendations for this specific candidate in strict JSON format.
       "courseId": "training_1_...",
       "courseName": "Fundamentals of Entrepreneurship",
       "reason": "Clear explanation of why this training course matches.",
-      "rulesApplied": ["Rule 1"]
+      "rulesApplied": []
     }
   ]
   //Ghaith's change end
@@ -587,6 +588,7 @@ Provide recommendations for this specific candidate in strict JSON format.
 - recommendationIntro should ONLY describe candidate background (seniority, years, expertise)
 - Do NOT mention WHY certifications are recommended in the intro
 - reason field MUST be in ${language === 'ar' ? 'Arabic' : 'English'}
+- rulesApplied field: ONLY include rules from the Business Rules section provided above. DO NOT include internal/system rules (like seniority logic, duplicate prevention, etc.). If no Business Rules apply to this recommendation, use empty array [].
 - Respond with a SINGLE OBJECT, NOT wrapped in "candidates" array
 - Response must be valid JSON only
 - No markdown formatting

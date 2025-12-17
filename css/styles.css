@@ -11,7 +11,7 @@
   --card-bg: #FFFFFF;           /* client --color-primary-bg / neutral-0 */
 
   /* Text & muted text */
-  --text: black;
+  --text: #000000  /*#133727;*/
   --muted: #7E9196;             /* client --color-gray-600 */
 
   /* Status colors */
@@ -110,7 +110,7 @@ img,video{ max-width:100%; height:auto; display:block; }
   margin-bottom: var(--space-s);
   flex-shrink: 0;
  }
-.section-header h2 { margin:0; font-size:1.05rem; display:flex; align-items:center; gap:10px; }
+.section-header h2 { margin:0; font-size:1.05rem; display:flex; align-items:center; gap:10px; color: #0e3a28;}
 
 /* chat messages area */
 .chat-messages {
@@ -125,6 +125,7 @@ img,video{ max-width:100%; height:auto; display:block; }
   background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
   min-height: 0;
   margin-bottom: var(--space-s);
+  color: #0e3a28;
  }
 
 /* message bubbles */
@@ -184,7 +185,7 @@ button:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--text);
+  color: #0e3a28;
  }
 
 /* Rules label with optional tag */
@@ -736,7 +737,7 @@ background: linear-gradient(90deg,var(#074D31), var(#074D31));
  }
 
 .recommendation-hours i {
-  color: var(--primary);
+  color: #000403;
  }
 
 .recommendation-hours strong {

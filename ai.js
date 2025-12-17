@@ -452,6 +452,59 @@ Begin your response now with the JSON object only:
 `;
 }
 
+// --- NEW HELPER FUNCTION FOR OPTION 1: HYBRID APPROACH ---
+function generateCvPromptFromStructuredData(cv) {
+  // FAST PATH: If parsing isn't done or failed, fall back to raw text immediately.
+  // This ensures the first "Generate" click is instant.
+  if (!cv.structured && !cv.experience && !cv.skills && !cv.certifications) {
+    return cv.text || "";
+  }
+
+  // STRUCTURED PATH: If we have structured data (from parsing or user edits), use it.
+  // This ensures manual edits (like adding a certificate) are seen by the AI.
+  let output = `Candidate Name: ${cv.name}\n`;
+
+  // 1. Experience
+  if (cv.experience && cv.experience.length > 0) {
+    output += "\nEXPERIENCE (Verified):\n";
+    cv.experience.forEach(exp => {
+      output += `- ${exp.jobTitle} at ${exp.company} (${exp.period || exp.years || "N/A"})\n`;
+      if (exp.description) output += `  Description: ${exp.description}\n`;
+    });
+  }
+
+  // 2. Education
+  if (cv.education && cv.education.length > 0) {
+    output += "\nEDUCATION (Verified):\n";
+    cv.education.forEach(edu => {
+      output += `- ${edu.degreeField} at ${edu.school}\n`;
+    });
+  }
+
+  // 3. Certifications
+  if (cv.certifications && cv.certifications.length > 0) {
+    output += "\nEXISTING CERTIFICATIONS (Verified - Do Not Recommend These):\n";
+    cv.certifications.forEach(cert => {
+      const title = cert.title || cert.certName || "Unknown Certificate";
+      output += `- ${title}\n`;
+    });
+  }
+
+  // 4. Skills
+  if (cv.skills && cv.skills.length > 0) {
+    output += "\nSKILLS (Verified):\n";
+    cv.skills.forEach(skill => {
+      const skillName = typeof skill === 'string' ? skill : (skill.title || skill.name);
+      if (skillName) output += `- ${skillName}\n`;
+    });
+  }
+
+  // 5. Append raw text as fallback context, but explicitly prioritize verified data above
+  output += `\n\n[RAW CV CONTEXT FOLLOWS FOR REFERENCE]\n${cv.text}\n`;
+
+  return output;
+}
+
 // START OF EDIT BY JOUD
 /**
  * NEW: Analyzes a single CV and returns recommendations for just that person.
@@ -474,6 +527,12 @@ export async function analyzeSingleCvWithAI(cv, rulesArray, language = 'en', max
       ? "مقدمة موجزة تنتهي بـ: بناءً على ذلك، نوصي بالشهادات التالية: (50 كلمة كحد أقصى)"
       : "Brief intro ending with: Based on this, we recommend the following certificates: (MAXIMUM 50 WORDS)";
 
+  // --- CHANGED FOR OPTION 1 ---
+  // Generate the CV text dynamically. If user edited the CV, this function
+  // returns the verified data strings. If not, it returns raw text.
+  const dynamicCvText = generateCvPromptFromStructuredData(cv);
+  // -----------------------------
+
   const prompt = `
 ${ANALYSIS_SYSTEM_PROMPT.trim()}
 
@@ -492,7 +551,7 @@ ${rulesArray && rulesArray.length > 0 ? rulesArray.map((r) => `- ${r}`).join("\n
 
 **CV to Analyze:**
 --- CV Name: ${cv.name} ---
-${cv.text}
+${dynamicCvText}
 
 **Task:**
 Provide recommendations for this specific candidate in strict JSON format.

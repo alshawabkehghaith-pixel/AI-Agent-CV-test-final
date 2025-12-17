@@ -110,7 +110,7 @@ For Arabic, use the same structure but translate appropriately and end with:
 4. ONLY recommend certifications that exist in the provided catalog
 5. Use exact certificate names from the catalog
 6. The "reason" field MUST be in the requested language (English or Arabic)
-7. Seniority Logic Rule (CRITICAL): For highly experienced or senior candidates, DO NOT recommend foundational, entry-level, introductory, awareness-level, or hands-on implementation certifications OR training courses in areas they would reasonably oversee rather than execute directly. Assume implicit domain knowledge gained through long-term experience. If training is recommended, it MUST be advanced, strategic, executive-level, governance-focused, or transformation-oriented. This rule applies across all professional domains, not only IT.
+7. Seniority Logic Guidline (CRITICAL): For highly experienced or senior candidates, DO NOT recommend foundational, entry-level, introductory, awareness-level, or hands-on implementation certifications OR training courses in areas they would reasonably oversee rather than execute directly. Assume implicit domain knowledge gained through long-term experience. If training is recommended, it MUST be advanced, strategic, executive-level, governance-focused, or transformation-oriented. This guidline applies across all professional domains, not only IT.
 8. DO NOT recommend any certification or training course that the candidate already holds or has completed, as evidenced in the CV. Treat existing certifications and trainings as satisfied and only recommend new, additive items.
 9. If an equivalent or higher-level certification or training is already present in the CV, do not recommend a lower or duplicate version from the catalog.
 
@@ -178,6 +178,7 @@ Rules:
 - Keep descriptions concise but complete
 - Do not invent or assume information
 `;
+
 
 
 

@@ -1782,6 +1782,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Add user message to the chat UI
     addMessage(message, true);
+
+    // 17-12-2025 Autoscroll only for user messages (keep bot behavior unchanged)
+    const chatMessages = document.getElementById("chat-messages");
+    if (chatMessages) {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
     chatHistory.push({ text: message, isUser: true });
     // --- FIX START joud 16-12-2025: Save immediately after user sends message ---
     saveChatHistory(chatHistory);

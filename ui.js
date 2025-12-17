@@ -456,27 +456,6 @@ function getVisibleAppliedRules(rec) {
     .filter((r) => r && normalizedBusiness.has(r.toLowerCase()));
 }
 
-// Helper: only show rules that are part of the user's Business Rules,
-// even if the AI internally applied additional hidden rules.
-function getVisibleAppliedRules(rec) {
-  if (!rec || !Array.isArray(rec.rulesApplied) || rec.rulesApplied.length === 0) {
-    return [];
-  }
-
-  const businessRules = getRulesFromUI();
-  if (!Array.isArray(businessRules) || businessRules.length === 0) {
-    return [];
-  }
-
-  const normalizedBusiness = new Set(
-    businessRules.map((r) => (r || "").trim().toLowerCase()).filter(Boolean)
-  );
-
-  return rec.rulesApplied
-    .map((r) => (r || "").trim())
-    .filter((r) => r && normalizedBusiness.has(r.toLowerCase()));
-}
-
 // 14-12-2025 Starting Taif's updates
 function updateGenerateButton(uploadedCvs) {
   const generateBtn = document.getElementById("generate-recommendations-btn");

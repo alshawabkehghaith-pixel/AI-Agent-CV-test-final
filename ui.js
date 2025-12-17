@@ -1786,6 +1786,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Add user message to the chat UI
     addMessage(message, true);
+    chatHistory.push({ text: message, isUser: true });
+     userInput.value = "";
+    sendButton.disabled = true;
+    const typingEl = showTypingIndicator();
 
     // 17-12-2025 Autoscroll only for user messages (keep bot behavior unchanged)
     const chatMessages = document.getElementById("chat-messages");
@@ -1793,21 +1797,19 @@ document.addEventListener("DOMContentLoaded", async () => {
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    chatHistory.push({ text: message, isUser: true });
+    
     // --- FIX START joud 16-12-2025: Save immediately after user sends message ---
     saveChatHistory(chatHistory);
     // --- FIX END ---
-    userInput.value = "";
-    sendButton.disabled = true;
-    const typingEl = showTypingIndicator();
+   
 
     // 17-12-2025 Ensure typing indicator ("loading...") stays in view
-    if (typingEl) {
-      const chatMessagesForTyping = document.getElementById("chat-messages");
-      if (chatMessagesForTyping) {
-        chatMessagesForTyping.scrollTop = chatMessagesForTyping.scrollHeight;
-      }
-    }
+    // if (typingEl) {
+    //   const chatMessagesForTyping = document.getElementById("chat-messages");
+    //   if (chatMessagesForTyping) {
+    //     chatMessagesForTyping.scrollTop = chatMessagesForTyping.scrollHeight;
+    //   }
+    // }
 
     try {
       const cvArrayForChat =
@@ -2283,6 +2285,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+
 
 
 

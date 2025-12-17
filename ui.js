@@ -1876,7 +1876,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!hasContent && accumulatedText.trim()) {
               hasContent = true;
               botMessageDiv.style.display = "";
-              hideTypingIndicator();
+              
               // Render the first chunk content so we can measure it
               if (typeof marked !== "undefined") {
                 botMessageDiv.innerHTML = marked.parse(accumulatedText);
@@ -2285,6 +2285,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+
 
 
 

@@ -326,6 +326,7 @@ export function searchByField(fieldName) {
 }
 
 // --- Recommendation summarization for chat grounding ---
+// 17-12-2025 joud start
 export function summarizeRecommendationsForChat(recs) {
   if (!recs || !Array.isArray(recs.candidates) || recs.candidates.length === 0) {
     return "No recommendations generated yet.";
@@ -334,39 +335,33 @@ export function summarizeRecommendationsForChat(recs) {
   const lines = [];
   recs.candidates.forEach((candidate) => {
     lines.push(`Candidate: ${candidate.candidateName || "Candidate"}`);
-    (candidate.recommendations || []).forEach((rec) => {
-      lines.push(
-        `- ${rec.certName || "Certification"}${rec.certId ? ` [${rec.certId}]` : ""}: ${rec.reason || "Reason not provided"}`
-      );
-    });
+    
+    // 1. Summarize Certificates
+    if (candidate.recommendations && candidate.recommendations.length > 0) {
+      lines.push("Recommended Certificates:");
+      candidate.recommendations.forEach((rec) => {
+        lines.push(
+          `- ${rec.certName || "Certification"}${rec.certId ? ` [${rec.certId}]` : ""}: ${rec.reason || "Reason not provided"}`
+        );
+      });
+    }
+
+    // 2. Summarize Training Courses (This was missing)
+    if (candidate.trainingCourses && candidate.trainingCourses.length > 0) {
+      lines.push("Recommended Training Courses:");
+      candidate.trainingCourses.forEach((course) => {
+        lines.push(
+          `- ${course.courseName || "Training Course"}${course.courseId ? ` [${course.courseId}]` : ""}: ${course.reason || "Reason not provided"}`
+        );
+      });
+    }
+
     lines.push("");
   });
 
   return lines.join("\n").trim();
 }
-
-// --- Year and experience calculation helpers ---
-export function extractYear(str) {
-  const match = str.match(/\b(19|20)\d{2}\b/);
-  return match ? parseInt(match[0], 10) : null;
-}
-
-export function calculateYearsFromPeriod(period) {
-  if (!period || typeof period !== "string") return 0;
-  const currentYear = new Date().getFullYear();
-  const parts = period.split(/\s*[-–—to]+\s*/i);
-  if (parts.length < 2) return 0;
-  const startYear = extractYear(parts[0].trim());
-  const endYear =
-    parts[1].toLowerCase().includes("present") ||
-    parts[1].toLowerCase().includes("current") ||
-    parts[1].toLowerCase().includes("now")
-      ? currentYear
-      : extractYear(parts[1].trim());
-  if (!startYear || !endYear) return 0;
-  return Math.max(0, endYear - startYear);
-}
-
+// 17-12-2025 joud end
 export function calculateTotalExperience(experienceArray) {
   if (!Array.isArray(experienceArray)) return 0;
   let totalYears = 0;
@@ -376,3 +371,4 @@ export function calculateTotalExperience(experienceArray) {
   });
   return Math.round(totalYears * 10) / 10;
 }
+

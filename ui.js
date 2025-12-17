@@ -815,7 +815,6 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
   //Ghaith's change start - remove top spacing so header is at very top of page
   pdfContainer.style.marginTop = '0';
   pdfContainer.style.paddingTop = '0';
-  pdfContainer.style.color = black;
   //Ghaith's change end
   if (isArabic) {
     pdfContainer.style.direction = 'rtl';
@@ -1688,16 +1687,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     chatHistory = loadChatHistory();
     lastRecommendations = loadLastRecommendations() || { candidates: [] };
 
-    // Restore chat (always keep the static welcome/instruction message at the top)
-    const chatContainer = document.getElementById("chat-messages");
-    if (chatContainer) {
-      // Reset to welcome message first
-      chatContainer.innerHTML = `<div class="message bot-message">${getUiText('welcomeMessage')}</div>`;
-
-      // Then re-append persisted messages (if any) below it
-      if (chatHistory.length > 0) {
-        chatHistory.forEach(msg => addMessage(msg.text, msg.isUser));
-      }
+    // Restore chat
+    if (chatHistory.length > 0) {
+        const chatContainer = document.getElementById("chat-messages");
+        if (chatContainer) {
+            chatContainer.innerHTML = ""; 
+            chatHistory.forEach(msg => addMessage(msg.text, msg.isUser));
+        }
     }
 
     // Restore recommendations (Displays instantly without loader)
@@ -1787,29 +1783,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Add user message to the chat UI
     addMessage(message, true);
     chatHistory.push({ text: message, isUser: true });
-     userInput.value = "";
-    sendButton.disabled = true;
-    const typingEl = showTypingIndicator();
-
-    // 17-12-2025 Autoscroll only for user messages (keep bot behavior unchanged)
-    const chatMessages = document.getElementById("chat-messages");
-    if (chatMessages) {
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    
     // --- FIX START joud 16-12-2025: Save immediately after user sends message ---
     saveChatHistory(chatHistory);
     // --- FIX END ---
-   
-
-    // 17-12-2025 Ensure typing indicator ("loading...") stays in view
-    // if (typingEl) {
-    //   const chatMessagesForTyping = document.getElementById("chat-messages");
-    //   if (chatMessagesForTyping) {
-    //     chatMessagesForTyping.scrollTop = chatMessagesForTyping.scrollHeight;
-    //   }
-    // }
+    userInput.value = "";
+    sendButton.disabled = true;
+    const typingEl = showTypingIndicator();
 
     try {
       const cvArrayForChat =
@@ -1876,6 +1855,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!hasContent && accumulatedText.trim()) {
               hasContent = true;
               botMessageDiv.style.display = "";
+              hideTypingIndicator();
               
               // Render the first chunk content so we can measure it
               if (typeof marked !== "undefined") {
@@ -2285,10 +2265,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
-
-
-
-
 
 
 

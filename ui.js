@@ -312,6 +312,8 @@ function updateLanguage(lang) {
     lastRecommendations.candidates.length > 0
   ) {
     recommendationsContainer.innerHTML = `<div class="loader"></div>`;
+    // Hide download button while recommendations are being re-generated / translated
+    updateDownloadButtonVisibility(lastRecommendations);
 
     (async () => {
       try {
@@ -323,9 +325,11 @@ function updateLanguage(lang) {
 
         recommendationsContainer.innerHTML = "";
         displayRecommendations(translatedRecommendations, recommendationsContainer, resultsSection, lang);
+        updateDownloadButtonVisibility(lastRecommendations);
       } catch (err) {
         recommendationsContainer.innerHTML = "";
         displayRecommendations(lastRecommendations, recommendationsContainer, resultsSection, lang);
+        updateDownloadButtonVisibility(lastRecommendations);
       }
     })();
   }
@@ -2046,6 +2050,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       allRecommendationsMap = {}; 
       lastRecommendations = { candidates: [] };
       saveLastRecommendations(lastRecommendations);
+      // Hide download button while fresh recommendations are being generated
+      updateDownloadButtonVisibility(lastRecommendations);
       // added below function for CV Selection //Start
       if (cvArray.length === 0) {
         setButtonLoading(generateBtn, false);
@@ -2319,7 +2325,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
-
 
 
 

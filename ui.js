@@ -1687,13 +1687,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     chatHistory = loadChatHistory();
     lastRecommendations = loadLastRecommendations() || { candidates: [] };
 
-    // Restore chat
-    if (chatHistory.length > 0) {
-        const chatContainer = document.getElementById("chat-messages");
-        if (chatContainer) {
-            chatContainer.innerHTML = ""; 
-            chatHistory.forEach(msg => addMessage(msg.text, msg.isUser));
-        }
+    // Restore chat (always keep the static welcome/instruction message at the top)
+    const chatContainer = document.getElementById("chat-messages");
+    if (chatContainer) {
+      // Reset to welcome message first
+      chatContainer.innerHTML = `<div class="message bot-message">${getUiText('welcomeMessage')}</div>`;
+
+      // Then re-append persisted messages (if any) below it
+      if (chatHistory.length > 0) {
+        chatHistory.forEach(msg => addMessage(msg.text, msg.isUser));
+      }
     }
 
     // Restore recommendations (Displays instantly without loader)

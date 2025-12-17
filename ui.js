@@ -942,7 +942,7 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
       const fileDiv = document.createElement('div');
       fileDiv.className = 'pdf-candidate-cv-name';
       //Ghaith's change start - darken file name text, reduce spacing for first candidate
-      fileDiv.style.color = '#1B8354';
+      fileDiv.style.color = '#000000';
       fileDiv.style.fontWeight = '600';
       if (index === 0) {
         fileDiv.style.marginBottom = '4px';
@@ -961,7 +961,7 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
       introDiv.style.padding = '0';
       introDiv.style.fontSize = '11px';
       introDiv.style.lineHeight = '1.6';
-      introDiv.style.color = '#1B8354';
+      introDiv.style.color = '#000000';
       introDiv.textContent = candidate.recommendationIntro;
       candidateSection.appendChild(introDiv);
     }
@@ -971,7 +971,7 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
       certSubsection.className = 'pdf-subsection';
       //Ghaith's change start - certificates section should start on page 1 for first candidate
       const certMarginTop = index === 0 ? '12px' : '20px';
-      certSubsection.innerHTML = `<h3 style="color:#1B8354; margin-top:${certMarginTop};">${language === 'ar' ? 'الشهادات' : 'Certificates'}</h3>`;
+      certSubsection.innerHTML = `<h3 style="color:#000000; margin-top:${certMarginTop};">${language === 'ar' ? 'الشهادات' : 'Certificates'}</h3>`;
       //Ghaith's change start - avoid page breaks in certificates subsection, ensure first one starts on page 1
       certSubsection.style.pageBreakInside = 'avoid';
       certSubsection.style.breakInside = 'avoid';
@@ -1026,14 +1026,14 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
 
         //Ghaith's change start - match exact UI format with icons and inline rules
         card.innerHTML = `
-          <div class="recommendation-title" style="font-weight:600; font-size:1rem; margin:0 0 8px 0; color:#1B8354;">${displayName}</div>
-          <div class="recommendation-reason" style="margin:8px 0; color:#1B8354; line-height:1.6;">
+          <div class="recommendation-title" style="font-weight:600; font-size:1rem; margin:0 0 8px 0; color:#000000;">${displayName}</div>
+          <div class="recommendation-reason" style="margin:8px 0; color:#000000; line-height:1.6;">
             <i class="fas fa-lightbulb"></i> ${rec.reason}
           </div>
           <div class="recommendation-hours" style="margin-top:4px; font-size:0.9rem; color:#7E9196; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
             <i class="far fa-clock" style="color:#074D31;"></i>
             <span>${UI_TEXT[language].estTime}</span>
-            <strong style="color:#1B8354; font-weight:600;">${hoursText}</strong>
+            <strong style="color:#323836; font-weight:600;">${hoursText}</strong>
             ${rec.rulesApplied && rec.rulesApplied.length > 0
               ? `<span class="recommendation-rule-inline" style="margin-top:0; font-size:0.85rem; color:#7E9196; font-style:italic;"><i class="fas fa-gavel"></i> ${UI_TEXT[language].rulesApplied} ${rec.rulesApplied.join(", ")}</span>`
               : ""
@@ -1183,14 +1183,14 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
 
         //Ghaith's change start - match exact UI format with icons and inline rules
         card.innerHTML = `
-          <div class="recommendation-title" style="font-weight:600; font-size:1rem; margin:0 0 8px 0; color:#1B8354;">${displayName}</div>
-          <div class="recommendation-reason" style="margin:8px 0; color:#1B8354; line-height:1.6;">
+          <div class="recommendation-title" style="font-weight:600; font-size:1rem; margin:0 0 8px 0; color:#323836;">${displayName}</div>
+          <div class="recommendation-reason" style="margin:8px 0; color:#323836; line-height:1.6;">
             <i class="fas fa-lightbulb"></i> ${rec.reason}
           </div>
           <div class="recommendation-hours" style="margin-top:4px; font-size:0.9rem; color:#7E9196; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
             <i class="far fa-clock" style="color:#074D31;"></i>
             <span>${UI_TEXT[language].estTime}</span>
-            <strong style="color:#1B8354; font-weight:600;">${hoursText}</strong>
+            <strong style="color:#323836; font-weight:600;">${hoursText}</strong>
             ${rec.rulesApplied && rec.rulesApplied.length > 0
               ? `<span class="recommendation-rule-inline" style="margin-top:0; font-size:0.85rem; color:#7E9196; font-style:italic;"><i class="fas fa-gavel"></i> ${UI_TEXT[language].rulesApplied} ${rec.rulesApplied.join(", ")}</span>`
               : ""
@@ -2282,7 +2282,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
-
 
 
 

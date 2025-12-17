@@ -11,7 +11,7 @@
   --card-bg: #FFFFFF;           /* client --color-primary-bg / neutral-0 */
 
   /* Text & muted text */
-  --text: #000000  /*#133727;*/
+  --text: #000000;  /*#133727;*/
   --muted: #7E9196;             /* client --color-gray-600 */
 
   /* Status colors */
@@ -580,7 +580,7 @@ html[lang="ar"] .cv-modal .cv-close-btn {
  }
 
 .pdf-header {
-  background: linear-gradient(90deg, #074D31, #074D31);
+background: linear-gradient(90deg,var(#074D31), var(#074D31));
   color: white;
   padding: 24px;
   border-radius: 12px;
@@ -631,7 +631,7 @@ html[lang="ar"] .cv-modal .cv-close-btn {
  }
 
 .pdf-candidate-name {
-  color: #15878A;
+  color: #000000;
   font-size: 1.05rem;
   margin: 0 0 12px 0;
   font-weight: 600;
@@ -965,27 +965,25 @@ html[lang="ar"] .cv-modal .cv-close-btn {
 
 /* === TYPING INDICATOR === */
 .typing-indicator { 
-  display: inline-flex; 
+  display: flex; 
   align-items: center; 
   gap: 6px; 
-  padding: 10px 16px; 
+  padding: 10px 14px; 
   margin-right: auto;
   background: #f1f2f4;
+  color: var(--text);
   border-radius: 16px;
   border-bottom-left-radius: 6px;
-}
+ }
 
 .typing-dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background-color: var(--muted);
+  animation: typing-bounce 1.4s infinite ease-in-out;
   display: inline-block;
-  animation-name: typing-bounce;
-  animation-duration: 1.2s;
-  animation-iteration-count: infinite;
-  animation-timing-function: ease-in-out;
-}
+ }
 
 .typing-dot:nth-child(1) {
   animation-delay: -0.32s;

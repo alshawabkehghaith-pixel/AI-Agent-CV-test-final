@@ -167,8 +167,11 @@ export function showTypingIndicator() {
   const typingDiv = document.createElement("div");
   typingDiv.className = "message bot-message typing-indicator";
   typingDiv.id = "typing-indicator";
+  // Dots-only typing indicator (no text label)
   typingDiv.innerHTML =
-    '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+    '<span class="typing-dot"></span>' +
+    '<span class="typing-dot"></span>' +
+    '<span class="typing-dot"></span>';
 
   // Add the typing indicator without changing scroll position.
   chatMessages.appendChild(typingDiv);

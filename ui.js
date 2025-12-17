@@ -435,6 +435,48 @@ function getRulesFromUI() {
   return rules;
 }
 
+// Helper: only show rules that are part of the user's Business Rules,
+// even if the AI internally applied additional hidden rules.
+function getVisibleAppliedRules(rec) {
+  if (!rec || !Array.isArray(rec.rulesApplied) || rec.rulesApplied.length === 0) {
+    return [];
+  }
+
+  const businessRules = getRulesFromUI();
+  if (!Array.isArray(businessRules) || businessRules.length === 0) {
+    return [];
+  }
+
+  const normalizedBusiness = new Set(
+    businessRules.map((r) => (r || "").trim().toLowerCase()).filter(Boolean)
+  );
+
+  return rec.rulesApplied
+    .map((r) => (r || "").trim())
+    .filter((r) => r && normalizedBusiness.has(r.toLowerCase()));
+}
+
+// Helper: only show rules that are part of the user's Business Rules,
+// even if the AI internally applied additional hidden rules.
+function getVisibleAppliedRules(rec) {
+  if (!rec || !Array.isArray(rec.rulesApplied) || rec.rulesApplied.length === 0) {
+    return [];
+  }
+
+  const businessRules = getRulesFromUI();
+  if (!Array.isArray(businessRules) || businessRules.length === 0) {
+    return [];
+  }
+
+  const normalizedBusiness = new Set(
+    businessRules.map((r) => (r || "").trim().toLowerCase()).filter(Boolean)
+  );
+
+  return rec.rulesApplied
+    .map((r) => (r || "").trim())
+    .filter((r) => r && normalizedBusiness.has(r.toLowerCase()));
+}
+
 // 14-12-2025 Starting Taif's updates
 function updateGenerateButton(uploadedCvs) {
   const generateBtn = document.getElementById("generate-recommendations-btn");
@@ -540,6 +582,7 @@ function createCandidateCard(candidateData, language = 'en') {
 
       const hourWord = getUiText('hours');
       const hoursText = hours > 0 ? `${hours} ${hourWord}` : getUiText('na');
+      const visibleRules = getVisibleAppliedRules(rec);
 
       const card = document.createElement("div");
       card.className = "recommendation-card";
@@ -552,8 +595,9 @@ function createCandidateCard(candidateData, language = 'en') {
           <i class="far fa-clock"></i>
           <span>${getUiText('estTime')}</span>
           <strong>${hoursText}</strong>
-          ${rec.rulesApplied && rec.rulesApplied.length > 0
-              ? `<span class="recommendation-rule-inline"><i class="fas fa-gavel"></i> ${getUiText('rulesApplied')} ${rec.rulesApplied.join(", ")}</span>`
+          ${
+            visibleRules.length > 0
+              ? `<span class="recommendation-rule-inline"><i class="fas fa-gavel"></i> ${getUiText('rulesApplied')} ${visibleRules.join(", ")}</span>`
               : ""
           }
         </div>
@@ -678,6 +722,7 @@ function createCandidateCard(candidateData, language = 'en') {
 
       const hourWord = getUiText('hours');
       const hoursText = hours > 0 ? `${hours} ${hourWord}` : getUiText('na');
+      const visibleRules = getVisibleAppliedRules(rec);
 
       const card = document.createElement("div");
       card.className = "recommendation-card";
@@ -691,8 +736,9 @@ function createCandidateCard(candidateData, language = 'en') {
           <i class="far fa-clock"></i>
           <span>${getUiText('estTime')}</span>
           <strong>${hoursText}</strong>
-          ${rec.rulesApplied && rec.rulesApplied.length > 0
-              ? `<span class="recommendation-rule-inline"><i class="fas fa-gavel"></i> ${getUiText('rulesApplied')} ${rec.rulesApplied.join(", ")}</span>`
+          ${
+            visibleRules.length > 0
+              ? `<span class="recommendation-rule-inline"><i class="fas fa-gavel"></i> ${getUiText('rulesApplied')} ${visibleRules.join(", ")}</span>`
               : ""
           }
         </div>
@@ -1050,6 +1096,7 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
 
         const hourWord = UI_TEXT[language].hours;
         const hoursText = hours > 0 ? `${hours} ${hourWord}` : UI_TEXT[language].na;
+        const visibleRules = getVisibleAppliedRules(rec);
 
         // Recommendation Card
         const card = document.createElement('div');
@@ -1075,9 +1122,10 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
             <i class="far fa-clock" style="color:#074D31;"></i>
             <span>${UI_TEXT[language].estTime}</span>
             <strong style="color:#323836; font-weight:600;">${hoursText}</strong>
-            ${rec.rulesApplied && rec.rulesApplied.length > 0
-              ? `<span class="recommendation-rule-inline" style="margin-top:0; font-size:0.85rem; color:#7E9196; font-style:italic;"><i class="fas fa-gavel"></i> ${UI_TEXT[language].rulesApplied} ${rec.rulesApplied.join(", ")}</span>`
-              : ""
+            ${
+              visibleRules.length > 0
+                ? `<span class="recommendation-rule-inline" style="margin-top:0; font-size:0.85rem; color:#7E9196; font-style:italic;"><i class="fas fa-gavel"></i> ${UI_TEXT[language].rulesApplied} ${visibleRules.join(", ")}</span>`
+                : ""
             }
           </div>
         `;
@@ -1232,9 +1280,10 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
             <i class="far fa-clock" style="color:#074D31;"></i>
             <span>${UI_TEXT[language].estTime}</span>
             <strong style="color:#323836; font-weight:600;">${hoursText}</strong>
-            ${rec.rulesApplied && rec.rulesApplied.length > 0
-              ? `<span class="recommendation-rule-inline" style="margin-top:0; font-size:0.85rem; color:#7E9196; font-style:italic;"><i class="fas fa-gavel"></i> ${UI_TEXT[language].rulesApplied} ${rec.rulesApplied.join(", ")}</span>`
-              : ""
+            ${
+              visibleRules.length > 0
+                ? `<span class="recommendation-rule-inline" style="margin-top:0; font-size:0.85rem; color:#7E9196; font-style:italic;"><i class="fas fa-gavel"></i> ${UI_TEXT[language].rulesApplied} ${visibleRules.join(", ")}</span>`
+                : ""
             }
           </div>
         `;

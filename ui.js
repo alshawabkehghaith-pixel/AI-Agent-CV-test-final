@@ -815,6 +815,7 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
   //Ghaith's change start - remove top spacing so header is at very top of page
   pdfContainer.style.marginTop = '0';
   pdfContainer.style.paddingTop = '0';
+  pdfContainer.style.color = black;
   //Ghaith's change end
   if (isArabic) {
     pdfContainer.style.direction = 'rtl';
@@ -2282,6 +2283,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+
 
 
 

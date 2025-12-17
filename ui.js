@@ -812,9 +812,12 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
   // 1. Create a container for the PDF content
   const pdfContainer = document.createElement('div');
   pdfContainer.className = 'pdf-content';
-  //Ghaith's change start - remove top spacing so header is at very top of page
+  //Ghaith's change start - add padding to prevent cutoff
   pdfContainer.style.marginTop = '0';
-  pdfContainer.style.paddingTop = '0';
+  pdfContainer.style.paddingTop = '10px';
+  pdfContainer.style.paddingBottom = '10px';
+  pdfContainer.style.paddingLeft = '5px';
+  pdfContainer.style.paddingRight = '5px';
   //Ghaith's change end
   if (isArabic) {
     pdfContainer.style.direction = 'rtl';
@@ -831,10 +834,10 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
   //Ghaith's change start - ensure recommendations appear directly under header on same page, header at very top
   header.style.pageBreakAfter = 'avoid';
   header.style.breakAfter = 'avoid';
-  header.style.marginTop = '0';
-  header.style.marginBottom = '0';
-  header.style.paddingTop = '0';
-  header.style.paddingBottom = '0';
+  header.style.marginTop = '5px';
+  header.style.marginBottom = '10px';
+  header.style.paddingTop = '5px';
+  header.style.paddingBottom = '5px';
   //Ghaith's change end
   const now = new Date().toLocaleDateString(isArabic ? 'ar-SA' : 'en-US');
   
@@ -1279,7 +1282,7 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
   // 5. Trigger PDF Download
   //Ghaith's change start - add white space at top of each page
   const opt = {
-    margin: [15, 10, 15, 10], // top, left, bottom, right - increased top/bottom to prevent cutoff
+    margin: [20, 10, 20, 10], // top, left, bottom, right - increased top/bottom to prevent cutoff
     filename: `SkillMatch_Recommendations_${new Date().toISOString().slice(0,10)}.pdf`,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 2, useCORS: true },

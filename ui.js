@@ -1119,7 +1119,7 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
       const trainingSubsection = document.createElement('div');
       trainingSubsection.className = 'pdf-subsection';
       // 16-12-2025 Ghaith's Change Start - training directly after certificates (minimal gap, allow header to move up)
-      trainingSubsection.innerHTML = `<h3 style="color:#023B42; margin-top:6px;">${language === 'ar' ? 'الدورات التدريبية' : 'Training Courses'}</h3>`;
+      trainingSubsection.innerHTML = `<h3 style="color:#000000; margin-top:6px;">${language === 'ar' ? 'الدورات التدريبية' : 'Training Courses'}</h3>`;
       // Allow page breaks inside the subsection so the header can appear on the previous page
       // while each card/timeline object still avoids splitting.
       // trainingSubsection.style.pageBreakInside = 'avoid';
@@ -1279,11 +1279,12 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
   // 5. Trigger PDF Download
   //Ghaith's change start - add white space at top of each page
   const opt = {
-    margin: [10, 10, 10, 10], // top, left, bottom, right - top margin for white space on each page
+    margin: [15, 10, 15, 10], // top, left, bottom, right - increased top/bottom to prevent cutoff
     filename: `SkillMatch_Recommendations_${new Date().toISOString().slice(0,10)}.pdf`,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 2, useCORS: true },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak: { mode: ['css', 'legacy'] }
   };
   //Ghaith's change end
 

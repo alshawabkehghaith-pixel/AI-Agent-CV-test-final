@@ -125,16 +125,16 @@ img,video{ max-width:100%; height:auto; display:block; }
   background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
   min-height: 0;
   margin-bottom: var(--space-s);
-  color: #0e3a28;
+  /*color: #0e3a28;*/
  }
 
 /* message bubbles */
 .message { padding: 10px 14px; border-radius: 16px; max-width: 85%; word-break: break-word; box-shadow: 0 1px 0 rgba(0,0,0,0.02); }
 .user-message { margin-left: auto; background: var(--primary); color: white; border-bottom-right-radius: 6px; }
-.bot-message { margin-right: auto; background: #f1f2f4; color: #000000; border-bottom-left-radius: 6px; }
+.bot-message { margin-right: auto; background: #f1f2f4; color: var(--text);; border-bottom-left-radius: 6px; }
 
 /* markdown & lists inside bot */
-.bot-message ul { margin: 8px 0 4px 18px; padding-left: 0; color: #000000; }
+.bot-message ul { margin: 8px 0 4px 18px; padding-left: 0; color: var(--muted); }
 .bot-message li { margin: 6px 0; }
 
 /* input row - at bottom */
@@ -1843,6 +1843,7 @@ html[lang="ar"] .footer-text {
 }
 
 /* 15-12-2025 Ending Taif's updates  */
+
 
 
 

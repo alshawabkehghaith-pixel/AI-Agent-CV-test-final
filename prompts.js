@@ -54,7 +54,7 @@ Your job is to:
       "certId": "certificate_id_from_catalog",
       "certName": "Exact Certificate Name from Catalog",
       "reason": "Clear, specific explanation of why THIS certification is relevant to THIS candidate's experience, skills, and career goals. MUST BE IN THE REQUESTED LANGUAGE.",
-      "rulesApplied": ["List of business rule numbers or descriptions that influenced this recommendation"]
+      "rulesApplied": ["List of business rule numbers and their descriptions that influenced this recommendation. Do not visually display the rule you applied unless it is one of the business rules listed in the business rule section. "]
     }
   ]
 }
@@ -178,6 +178,7 @@ Rules:
 - Keep descriptions concise but complete
 - Do not invent or assume information
 `;
+
 
 
 

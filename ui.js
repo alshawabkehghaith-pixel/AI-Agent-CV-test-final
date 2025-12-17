@@ -807,9 +807,20 @@ function updateDownloadButtonVisibility(recommendations) {
 
   if (!recommendations || !recommendations.candidates || recommendations.candidates.length === 0) {
     downloadBtn.classList.add("hidden");
-  } else {
-    downloadBtn.classList.remove("hidden");
+    return;
   }
+
+  // Only show the download button when all recommendations are fully rendered
+  // (i.e., no loading spinners/placeholders remain in the results container).
+  const recommendationsContainer = document.getElementById("recommendations-container");
+  const stillLoading = recommendationsContainer && recommendationsContainer.querySelector(".loader");
+
+  if (stillLoading) {
+    downloadBtn.classList.add("hidden");
+    return;
+  }
+
+  downloadBtn.classList.remove("hidden");
 }
 // Starting Taif's updates
 function downloadRecommendationsAsPDF(recommendations, language = 'en') {

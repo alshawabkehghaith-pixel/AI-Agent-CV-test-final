@@ -1714,6 +1714,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Reset chat to welcome message first. If persistence loads history below, it will overwrite this.
   clearChatHistoryDom(); 
   // --- FIX END ---
+  await loadCertificateCatalog();
+  //Ghaith's change start
+  await loadTrainingCoursesCatalog();
+  //Ghaith's change end
   // 12-15-2025 Joud start
   // 3. Persistence Logic
   if (!isPersistenceEnabled()) {
@@ -1755,12 +1759,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
   // 12-15-2025 joud end
-  await loadCertificateCatalog();
-  //Ghaith's change start
-  await loadTrainingCoursesCatalog();
-  //Ghaith's change end
-
-    // 12-15-2025 Joud start
+  // 12-15-2025 Joud start
   // 5. NEW: Load Persisted CVs
   const savedCvs = loadSubmittedCvs();
   if (savedCvs && savedCvs.length > 0) {
@@ -2320,6 +2319,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+
 
 
 

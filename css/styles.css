@@ -965,25 +965,29 @@ background: linear-gradient(90deg,var(#074D31), var(#074D31));
 
 /* === TYPING INDICATOR === */
 .typing-indicator { 
-  display: flex; 
+  display: inline-flex; 
   align-items: center; 
-  gap: 6px; 
-  padding: 10px 14px; 
+  justify-content: center;
+  gap: 8px; 
+  padding: 10px 16px; 
   margin-right: auto;
   background: #f1f2f4;
   color: var(--text);
   border-radius: 16px;
   border-bottom-left-radius: 6px;
- }
+}
 
 .typing-dot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background-color: var(--muted);
-  animation: typing-bounce 1.4s infinite ease-in-out;
   display: inline-block;
- }
+  animation-name: typing-bounce;
+  animation-duration: 1.2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
 
 .typing-dot:nth-child(1) {
   animation-delay: -0.32s;

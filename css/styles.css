@@ -11,7 +11,7 @@
   --card-bg: #FFFFFF;           /* client --color-primary-bg / neutral-0 */
 
   /* Text & muted text */
-  --text: #000000;  /*#133727;*/
+  --text: #000000;  /*#133727; (Liyan +2 point for finding the missing semi-colon ;)*/
   --muted: #7E9196;             /* client --color-gray-600 */
 
   /* Status colors */
@@ -576,7 +576,7 @@ html[lang="ar"] .cv-modal .cv-close-btn {
 .pdf-content {
   padding: 40px;
   font-family: 'Roboto', sans-serif;
-  color: #000000;
+  color: var(--text);
  }
 
 .pdf-header {
@@ -624,14 +624,14 @@ background: linear-gradient(90deg,var(#074D31), var(#074D31));
  }
 
 .pdf-candidate-cv-name {
-  color: #000000;
+  color: var(--text);
   font-size: 0.9rem;
   margin: 0 0 8px 0;
   font-weight: 400;
  }
 
 .pdf-candidate-name {
-  color: #000000;
+  color: var(--text);
   font-size: 1.05rem;
   margin: 0 0 12px 0;
   font-weight: 600;
@@ -649,12 +649,12 @@ background: linear-gradient(90deg,var(#074D31), var(#074D31));
   font-weight: 600;
   font-size: 1rem;
   margin: 0 0 8px 0;
-  color: #000000;
+  color: var(--text);
  }
 
 .pdf-recommendation-reason {
   margin: 8px 0;
-  color: #000000;
+  color: var(--text);
   line-height: 1.6;
  }
 

@@ -1687,13 +1687,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     chatHistory = loadChatHistory();
     lastRecommendations = loadLastRecommendations() || { candidates: [] };
 
-    // Restore chat
-    if (chatHistory.length > 0) {
-        const chatContainer = document.getElementById("chat-messages");
-        if (chatContainer) {
-            chatContainer.innerHTML = ""; 
-            chatHistory.forEach(msg => addMessage(msg.text, msg.isUser));
-        }
+    // Restore chat (always keep the static welcome/instruction message at the top)
+    const chatContainer = document.getElementById("chat-messages");
+    if (chatContainer) {
+      // Reset to welcome message first
+      chatContainer.innerHTML = `<div class="message bot-message">${getUiText('welcomeMessage')}</div>`;
+
+      // Then re-append persisted messages (if any) below it
+      if (chatHistory.length > 0) {
+        chatHistory.forEach(msg => addMessage(msg.text, msg.isUser));
+      }
     }
 
     // Restore recommendations (Displays instantly without loader)
@@ -1782,6 +1785,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Add user message to the chat UI
     addMessage(message, true);
+
+    // 17-12-2025 Autoscroll only for user messages (keep bot behavior unchanged)
+    const chatMessages = document.getElementById("chat-messages");
+    if (chatMessages) {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
     chatHistory.push({ text: message, isUser: true });
     // --- FIX START joud 16-12-2025: Save immediately after user sends message ---
     saveChatHistory(chatHistory);
@@ -1789,6 +1799,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     userInput.value = "";
     sendButton.disabled = true;
     const typingEl = showTypingIndicator();
+
+    // 17-12-2025 Ensure typing indicator ("loading...") stays in view
+    if (typingEl) {
+      const chatMessagesForTyping = document.getElementById("chat-messages");
+      if (chatMessagesForTyping) {
+        chatMessagesForTyping.scrollTop = chatMessagesForTyping.scrollHeight;
+      }
+    }
 
     try {
       const cvArrayForChat =
@@ -1855,7 +1873,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!hasContent && accumulatedText.trim()) {
               hasContent = true;
               botMessageDiv.style.display = "";
-              hideTypingIndicator();
               
               // Render the first chunk content so we can measure it
               if (typeof marked !== "undefined") {

@@ -1,25 +1,25 @@
- {
-  "اسم الدورة التدريبية": "أساسيات ريادة الأعمال",
-  "نبذة تعريفية": "تركز هذه الدورة على تقديم فهم شامل لمبادئ ريادة الأعمال مع تطبيقات عملية واقعية.",
-  "الهدف": "اكساب المشاركين القدرة على فهم وتنفيذ المهام المتعلقة بـ ريادة الأعمال.",
-  "الفئة المستهدفة": "المهنيون الذين يسعون لتعزيز خبراتهم.",
+{
+  "اسم الدورة التدريبية": "دورة هيكلية المؤسسات المعتمدة - توجاف",
+  "نبذة تعريفية": "دورة متخصصة في منهجية توجاف العالمية، تهدف إلى تزويد المشاركين بالإطار العملي لتصميم وتخطيط وإدارة البنية التحتية والتقنية للمنشآت الكبرى لضمان توافقها مع الأهداف الاستراتيجية.",
+  "الهدف": "تأهيل المشاركين لفهم دورة حياة تطوير الهيكلية، وإتقان المبادئ الأساسية اللازمة لاجتياز اختبار شهادة التأسيس في هيكلية المؤسسات.",
+  "الفئة المستهدفة": "معماريو النظم، مدراء تقنية المعلومات، محللو الأعمال الاستراتيجيون، ومخططو البنية الرقمية.",
   "مستوى الدورة": "خبير",
-  "المتطلبات السابقة": "لا توجد متطلبات سابقة",
+  "المتطلبات السابقة": "إلمام بأسس إدارة تقنية المعلومات والعمليات الإدارية داخل المؤسسات.",
   "لغة التدريب": "الإنجليزية",
-  "مجال التدريب": "ريادة الأعمال",
-  "عدد الساعات": 8,
+  "مجال التدريب": "هيكلية المؤسسات",
+  “عدد الساعات": "16",
   "نوع التدريب": "حضوري",
   "Training Course Title": "Open Group Enterprise Architectural Training",
-  "Overview": "Learn The Open Group Certified: TOGAF Enterprise Architecture Foundation today: find your The Open Group Certified: TOGAF Enterprise Architecture Foundation",
-  "Objective": "Acquire the ability for participants to understand and execute tasks related to Entrepreneurship.",
-  "Target Audience": "Professionals seeking to enhance their expertise.",
+  "Overview": "Learn The Open Group Certified: TOGAF Enterprise Architecture Foundation; a proven methodology for planning, designing, and governing enterprise IT architecture.",
+  "Objective": "Acquire the ability for participants to understand the Architecture Development Method (ADM) and successfully pass the TOGAF Foundation certification exam.",
+  "Target Audience": "Enterprise Architects, Solution Architects, IT Managers, and Senior Business Analysts.",
   "Training Level": "Expert",
-  "Previous Requirements": "No previous requirements",
+  "Previous Requirements": "Basic understanding of IT strategy and business process management.",
   "Training Language": "English",
-  "Training Field": "Entrepreneurship",
-  "Total Hours": 8,
-  "Training Type ": "In-person"
- },
+  "Training Field": "Enterprise Architecture",
+  "Total Hours": "16",
+  "Training Type": "In-person"
+},
 {
   "اسم الدورة التدريبية": "أساسيات ريادة الأعمال",
   "نبذة تعريفية": "تركز هذه الدورة على تقديم فهم شامل لمبادئ ريادة الأعمال مع تطبيقات عملية واقعية.",
@@ -11020,4 +11020,5 @@
   "Total Hours": 8,
   "Training Type ": "In-person"
  }
+
 

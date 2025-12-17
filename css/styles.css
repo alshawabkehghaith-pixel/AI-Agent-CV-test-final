@@ -967,12 +967,10 @@ background: linear-gradient(90deg,var(#074D31), var(#074D31));
 .typing-indicator { 
   display: inline-flex; 
   align-items: center; 
-  justify-content: center;
-  gap: 8px; 
+  gap: 6px; 
   padding: 10px 16px; 
   margin-right: auto;
   background: #f1f2f4;
-  color: var(--text);
   border-radius: 16px;
   border-bottom-left-radius: 6px;
 }

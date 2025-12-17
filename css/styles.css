@@ -576,7 +576,7 @@ html[lang="ar"] .cv-modal .cv-close-btn {
 .pdf-content {
   padding: 40px;
   font-family: 'Roboto', sans-serif;
-  color: #023B42;
+  color: black;
  }
 
 .pdf-header {
@@ -624,7 +624,7 @@ background: linear-gradient(90deg,var(#074D31), var(#074D31));
  }
 
 .pdf-candidate-cv-name {
-  color: #7E9196;
+  color: black;
   font-size: 0.9rem;
   margin: 0 0 8px 0;
   font-weight: 400;
@@ -649,12 +649,12 @@ background: linear-gradient(90deg,var(#074D31), var(#074D31));
   font-weight: 600;
   font-size: 1rem;
   margin: 0 0 8px 0;
-  color: #023B42;
+  color: black;
  }
 
 .pdf-recommendation-reason {
   margin: 8px 0;
-  color: #023B42;
+  color: black;
   line-height: 1.6;
  }
 
@@ -1843,6 +1843,7 @@ html[lang="ar"] .footer-text {
 }
 
 /* 15-12-2025 Ending Taif's updates  */
+
 
 
 

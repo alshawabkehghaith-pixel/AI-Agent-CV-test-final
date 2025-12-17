@@ -1797,6 +1797,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     sendButton.disabled = true;
     const typingEl = showTypingIndicator();
 
+    // 17-12-2025 Ensure typing indicator ("loading...") stays in view
+    if (typingEl) {
+      const chatMessagesForTyping = document.getElementById("chat-messages");
+      if (chatMessagesForTyping) {
+        chatMessagesForTyping.scrollTop = chatMessagesForTyping.scrollHeight;
+      }
+    }
+
     try {
       const cvArrayForChat =
         submittedCvData.length > 0 ? submittedCvData : uploadedCvs;

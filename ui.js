@@ -340,6 +340,27 @@ function initializeLanguage() {
     toggleBtn.addEventListener('click', () => {
       const newLang = currentLang === 'en' ? 'ar' : 'en';
       updateLanguage(newLang);
+
+      // Automatically regenerate recommendations when language changes
+      // if there are any uploaded/selected CVs.
+      try {
+        const generateBtn = document.getElementById('generate-recommendations-btn');
+        if (!generateBtn || generateBtn.disabled) return;
+
+        // Prefer selected CVs; fall back to any submitted CVs or raw uploads.
+        const hasSelectedSubmitted =
+          Array.isArray(submittedCvData) && submittedCvData.some(cv => cv && cv.selected !== false);
+        const hasAnySubmitted =
+          Array.isArray(submittedCvData) && submittedCvData.length > 0;
+        const hasUploadedOnly =
+          Array.isArray(uploadedCvs) && uploadedCvs.length > 0;
+
+        if (hasSelectedSubmitted || hasAnySubmitted || hasUploadedOnly) {
+          generateBtn.click();
+        }
+      } catch (e) {
+        console.error('Error auto-triggering recommendations on language change', e);
+      }
     });
   }
 }

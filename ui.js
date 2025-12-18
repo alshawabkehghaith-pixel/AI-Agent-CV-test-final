@@ -147,7 +147,7 @@ I'm here to help you identify the best learning paths for your team. Follow thes
     rulesTitle: "قواعد العمل",
     optional: "اختياري",
     addRule: "إضافة قاعدة",
-        stopBtn: "إيقاف إنشاء التوصيات",
+        stopBtn: "إيقاف إصدار التوصيات",
     generationStopped: "تم إيقاف إصدار التوصيات بواسطة المستخدم",
     generateBtn: "إصدار التوصيات",
     uploadedCvs: "السير الذاتية المرفوعة",
@@ -2503,6 +2503,7 @@ if (stopGenerationBtn) {
     });
   }
 });
+
 
 
 

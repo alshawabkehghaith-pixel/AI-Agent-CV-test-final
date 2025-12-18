@@ -899,8 +899,9 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
   pdfContainer.style.paddingRight = '5px';
   //Ghaith's change end
   if (isArabic) {
-    pdfContainer.style.direction = 'rtl';
-    pdfContainer.style.textAlign = 'right';
+    // Keep layout LTR (left-to-right) for card alignment, but text content will be RTL via individual element styles
+    pdfContainer.style.direction = 'ltr';
+    pdfContainer.style.textAlign = 'left';
     pdfContainer.style.fontFamily = "'Cairo', sans-serif"; 
   } else {
     pdfContainer.style.fontFamily = "'Roboto', sans-serif";
@@ -981,11 +982,6 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
     .stacked-bar .segment-hours { font-size: 10.5px; }
     .stacked-labels .segment-label { font-size: 10.5px; }
     .total-label { font-size: 11.5px; }
-    /* Arabic RTL support for PDF recommendation-reason (mirror UI behavior) */
-    .pdf-content[style*="direction: rtl"] .recommendation-reason {
-      direction: rtl;
-      text-align: right;
-    }
     /*Ghaith's change end */
   `;
   pdfContainer.appendChild(pdfStyle);

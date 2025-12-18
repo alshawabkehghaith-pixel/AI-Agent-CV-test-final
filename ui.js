@@ -876,18 +876,11 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
   function prepareReasonForPdf(reason, isArabic) {
     if (!isArabic || !reason) return reason;
 
-    let processed = reason;
-
-    // 1) Add zero-width space AFTER English words/numbers followed by space
-    processed = processed.replace(/([A-Za-z0-9)(]+)(\s+)/g, '$1\u200B$2');
-
-    // 2) Add zero-width space BEFORE English words/numbers preceded by space
-    processed = processed.replace(/(\s+)([A-Za-z0-9)(]+)/g, '$1\u200B$2');
-
-    // 3) For sequences of 3+ English words, add extra breaks between them
-    processed = processed.replace(/([A-Za-z]+(?:\s+[A-Za-z]+){2,})/g, (match) => {
-      // Insert zero-width space before each space inside the long English run
-      return match.replace(/\s+/g, '\u200B$&');
+    // Wrap English sequences (words, numbers, symbols) in spans with explicit LTR direction
+    // This helps html2canvas understand text direction and prevents overlapping
+    let processed = reason.replace(/([A-Za-z0-9()\-_.,;:!?@#$%&*+=<>[\]{}|\\\/"']+)/g, (match) => {
+      // Wrap each English sequence in a span with explicit LTR direction
+      return `<span style="direction:ltr; unicode-bidi:embed; display:inline;">${match}</span>`;
     });
 
     return processed;

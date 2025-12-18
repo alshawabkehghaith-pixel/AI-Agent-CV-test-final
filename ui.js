@@ -1004,6 +1004,11 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
     nameHeader.style.marginBottom = '6px';
     // 16-12-2025 Ghaith's Change End
     nameHeader.textContent = `${UI_TEXT[language].pdfCandidate}: ${displayCandidateName}`;
+    // Improve mixed Arabic/English handling for candidate header
+    nameHeader.dir = 'auto';
+    nameHeader.style.unicodeBidi = 'plaintext';
+    nameHeader.style.overflowWrap = 'anywhere';
+    nameHeader.style.wordBreak = 'break-word';
     candidateSection.appendChild(nameHeader);
 
     if (candidate.cvName && candidate.cvName !== displayCandidateName) {
@@ -1017,6 +1022,11 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
       }
       //Ghaith's change end
       fileDiv.textContent = `${UI_TEXT[language].pdfFile}: ${candidate.cvName}`;
+      // Improve mixed Arabic/English handling for file name line
+      fileDiv.dir = 'auto';
+      fileDiv.style.unicodeBidi = 'plaintext';
+      fileDiv.style.overflowWrap = 'anywhere';
+      fileDiv.style.wordBreak = 'break-word';
       candidateSection.appendChild(fileDiv);
     }
 
@@ -1031,6 +1041,11 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
       introDiv.style.lineHeight = '1.6';
       introDiv.style.color = '#000000';
       introDiv.textContent = candidate.recommendationIntro;
+      // Bidi-safe intro (Arabic + English)
+      introDiv.dir = 'auto';
+      introDiv.style.unicodeBidi = 'plaintext';
+      introDiv.style.overflowWrap = 'anywhere';
+      introDiv.style.wordBreak = 'break-word';
       candidateSection.appendChild(introDiv);
     }
 

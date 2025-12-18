@@ -526,22 +526,7 @@ html[lang="ar"] .cv-modal .cv-close-btn {
   transform: translateY(-1px);
  }
 
-/* Generate Recommendations button */
-#generate-recommendations-btn:disabled {
-  background: #D1D5DB;
-  color: #9CA3AF;
-  opacity: 1;
-  cursor: not-allowed;
- }
 
-#generate-recommendations-btn:not(:disabled) {
-  background: var(--primary);
- }
-
-#generate-recommendations-btn:not(:disabled):hover {
-  background: var(--primary-600);
-  transform: translateY(-1px);
- }
 
 /* Download Recommendations button */
 .download-btn {
@@ -1889,7 +1874,90 @@ html[lang="ar"] .footer-text {
 
 /* 15-12-2025 Ending Taif's updates  */
 
+.stop-generation-btn {
+  width: 100%;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 
+  font-size: 0.95rem;
+  font-weight: 500;
 
+  background: #dc3545;
+  color: white;
+  border: 2px dashed #dc3545;
 
+  transition: all 0.2s ease;
+}
+
+.stop-generation-btn:hover {
+  background: #c82333;
+  border-color: #c82333;
+  transform: translateY(-1px);
+}
+
+.stop-generation-btn:active {
+  transform: translateY(0);
+}
+
+.stop-generation-btn.hidden {
+  display: none;
+}
+
+.stop-generation-btn i {
+  font-size: 16px;
+}
+
+.recommendations-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+#generate-recommendations-btn {
+  background: white;
+  color: white;
+  border: 2px dashed var(--primary);
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  margin-bottom: var(--space-s);
+  width: 100%;
+}
+
+#generate-recommendations-btn:hover {
+  background: rgba(21,135,138,0.05);
+  border-color: var(--primary-600);
+  transform: translateY(-1px);
+ }
+
+/* Generate Recommendations button */
+#generate-recommendations-btn:disabled {
+  background: #D1D5DB;
+  color: #9CA3AF;
+  opacity: 1;
+  cursor: not-allowed;
+ }
+
+#generate-recommendations-btn:not(:disabled) {
+  background: var(--primary);
+ }
+
+#generate-recommendations-btn:not(:disabled):hover {
+  background: var(--primary-600);
+  transform: translateY(-1px);
+ }

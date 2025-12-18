@@ -1962,4 +1962,45 @@ html[lang="ar"] .footer-text {
   transform: translateY(-1px);
  }
 
+/* 18-12-2025 joud start */
+/* ========================================= */
+/* FORCE ENGLISH/LTR FOR CV MODAL (POC ONLY) */
+/* ========================================= */
 
+/* Force LTR direction and Left alignment for the entire modal wrapper and content */
+.cv-modal,
+.cv-modal-content,
+html[lang="ar"] .cv-modal,
+html[lang="ar"] .cv-modal-content {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+/* Ensure all inputs and textareas inside the modal are LTR */
+.cv-modal input,
+.cv-modal textarea,
+.cv-modal .skill-input,
+.cv-modal h2,
+.cv-modal h3,
+.cv-modal button {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+/* Fix the close button position for LTR layout even when in Arabic mode */
+html[lang="ar"] .cv-modal .cv-close-btn {
+  right: 14px !important;
+  left: auto !important;
+}
+
+/* Fix Search input icon position for LTR */
+html[lang="ar"] .cv-modal .cv-search-input {
+  padding: 10px 12px 10px 38px !important; /* Standard LTR padding */
+}
+
+html[lang="ar"] .cv-modal .search-icon {
+  left: 14px !important;
+  right: auto !important;
+}
+
+/* 18-12-2025 joud end */

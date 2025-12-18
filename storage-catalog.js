@@ -9,6 +9,9 @@ import {
   //Ghaith's change end
   USER_RULES_KEY,
   LAST_RECOMMENDATIONS_KEY,
+  //18-12-2025 joud start
+  LANGUAGE_KEY,
+  //18-12-2025 joud end
   DEFAULT_RULES,
   initializeCertificates,
   //Ghaith's change start
@@ -137,7 +140,19 @@ export function loadSubmittedCvs() {
     return [];
   }
 }
+export function saveLanguagePreference(lang) {
+  try {
+    localStorage.setItem(LANGUAGE_KEY, lang);
+  } catch (err) {
+    console.error("Failed to save language preference:", err);
+  }
+}
 
+export function loadLanguagePreference() {
+  const saved = localStorage.getItem(LANGUAGE_KEY);
+  // Return saved language, or default to 'en' if not found
+  return saved === 'ar' || saved === 'en' ? saved : 'en'; 
+}
 // --- Catalog loading/persistence ---
 export async function loadCertificateCatalog() {
   await initializeCertificates();
@@ -337,3 +352,4 @@ export function calculateTotalExperience(experienceArray) {
   });
   return Math.round(totalYears * 10) / 10;
 }
+

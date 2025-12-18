@@ -1202,43 +1202,5 @@ Return the translated JSON object starting with { and ending with }:`;
 // Re-export utility used in UI for CV summary
 export { calculateTotalExperience };
 
-// 18-12-2025 liyan's updates
-/**
- * Translates the existing chat history array using the Gemini API.
- */
-export async function translateChatHistory(history, targetLang) {
-  if (!history || history.length === 0) return [];
 
-  const translationPrompt = `
-    You are a professional translator. Translate the following chat history between a user and an AI assistant into ${targetLang === 'ar' ? 'Arabic' : 'English'}.
-    
-    CRITICAL RULES:
-    - Respond ONLY with a valid JSON array of objects.
-    - Each object must have "text" (the translated string) and "isUser" (the original boolean).
-    - Maintain technical terms like certification names exactly as they appear in the catalog.
-    - Do not add, remove, or summarize messages.
-    - Start your response with [ and end with ].
-    
-    Input JSON:
-    ${JSON.stringify(history)}
-  `;
-
-  try {
-    const rawResponse = await callGeminiAPI(translationPrompt, [], "");
-    let cleaned = rawResponse.replace(/```json\s*|\s*```/g, "").trim();
-    
-    // Extract the JSON array from the response string
-    const firstBracket = cleaned.indexOf("[");
-    const lastBracket = cleaned.lastIndexOf("]");
-    if (firstBracket !== -1 && lastBracket !== -1) {
-      cleaned = cleaned.substring(firstBracket, lastBracket + 1);
-    }
-    
-    return JSON.parse(cleaned);
-  } catch (err) {
-    console.error("AI Translation helper error:", err);
-    return history; // Return original history if translation fails to prevent data loss
-  }
-}
-// 18-12-2025 end liyan's updates
 

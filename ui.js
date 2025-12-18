@@ -2099,9 +2099,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (e.key === "Enter") handleSendMessage();
     });
   }
-
  if (generateBtn) {
   generateBtn.addEventListener("click", async () => {
+    
     function setButtonLoading(btn, loading) {
       if (loading) {
         btn.disabled = true;
@@ -2216,13 +2216,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       // Show message if stopped by user
-      if (stoppedByUser) {
-        const stoppedMessage = document.createElement("div");
-        stoppedMessage.className = "status-message status-error";
-        stoppedMessage.style.margin = "20px 0";
-        stoppedMessage.innerHTML = `<i class="fas fa-stop-circle"></i> ${getUiText('generationStopped')}`;
-        recommendationsContainer.insertBefore(stoppedMessage, recommendationsContainer.firstChild);
-      }
+      // if (stoppedByUser) {
+      //   const stoppedMessage = document.createElement("div");
+      //   stoppedMessage.className = "status-message status-error";
+      //   stoppedMessage.style.margin = "20px 0";
+      //   stoppedMessage.innerHTML = `<i class="fas fa-stop-circle"></i> ${getUiText('generationStopped')}`;
+      //   recommendationsContainer.insertBefore(stoppedMessage, recommendationsContainer.firstChild);
+      // }
 
     } catch (err) {
       console.error("Generation error:", err);
@@ -2237,7 +2237,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       updateDownloadButtonVisibility(lastRecommendations);
     }
   });
-}
+ }
 
 // ============================================================
 // 18-12-2025 Starting Taif's updates - Stop Generation Button
@@ -2503,6 +2503,7 @@ if (stopGenerationBtn) {
     });
   }
 });
+
 
 
 

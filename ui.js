@@ -305,12 +305,20 @@ function updateLanguage(lang) {
   const recommendationsContainer = document.getElementById("recommendations-container");
   const resultsSection = document.getElementById("results-section");
 
-  if (
+  // Check if there are selected CVs - if so, regenerate recommendations in the new language
+  const selectedCvs = submittedCvData.filter(cv => cv.selected);
+  const generateBtn = document.getElementById("generate-recommendations-btn");
+  
+  if (selectedCvs.length > 0 && generateBtn && !generateBtn.disabled) {
+    // Automatically trigger recommendation generation in the new language
+    generateBtn.click();
+  } else if (
     recommendationsContainer &&
     lastRecommendations &&
     lastRecommendations.candidates &&
     lastRecommendations.candidates.length > 0
   ) {
+    // If no selected CVs but we have existing recommendations, translate them
     recommendationsContainer.innerHTML = `<div class="loader"></div>`;
     // Hide download button while recommendations are being re-generated / translated
     updateDownloadButtonVisibility(lastRecommendations);
@@ -931,9 +939,9 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
     .pdf-candidate-result:first-child { margin-top: 0 !important; padding-top: 0 !important; }
     .pdf-subsection { margin-top: 4px; }
     .pdf-subsection h3 { font-size: 13.5px; margin: 6px 0 4px 0; }
-    .pdf-recommendation-card { font-size: 12px; padding: 6px 8px !important; overflow-wrap: anywhere; word-break: break-word; max-width: 100%; }
-    .pdf-recommendation-title { font-size: 13px; overflow-wrap: anywhere; word-break: break-word; max-width: 100%; }
-    .pdf-recommendation-reason { font-size: 12px; overflow-wrap: anywhere; word-break: break-word; max-width: 100%; white-space: normal; }
+    .pdf-recommendation-card { font-size: 12px; padding: 6px 8px !important; overflow-wrap: anywhere; word-break: break-word; width: 100%; box-sizing: border-box; }
+    .pdf-recommendation-title { font-size: 13px; overflow-wrap: anywhere; word-break: break-word; width: 100%; box-sizing: border-box; }
+    .pdf-recommendation-reason { font-size: 12px; overflow-wrap: anywhere; word-break: break-word; width: 100%; white-space: normal; box-sizing: border-box; }
     .pdf-recommendation-hours, .pdf-recommendation-rule { font-size: 11.5px; overflow-wrap: anywhere; word-break: break-word; max-width: 100%; }
     .timeline-wrapper { margin-top: 4px; }
     .timeline-title { font-size: 12px; margin-bottom: 3px; overflow-wrap: anywhere; word-break: break-word; max-width: 100%; }
@@ -1065,21 +1073,26 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
         card.style.breakInside = 'avoid';
         card.style.overflowWrap = 'anywhere';
         card.style.wordBreak = 'break-word';
-        card.style.maxWidth = '100%';
+        card.style.width = '100%';
+        card.style.boxSizing = 'border-box';
         //Ghaith's change end
 
         //Ghaith's change start - match exact UI format with icons and inline rules
+        const titleStyle = `font-weight:600; font-size:1rem; margin:0 0 8px 0; color:#000000; overflow-wrap:anywhere; word-break:break-word; white-space:normal; width:100%; box-sizing:border-box; ${isArabic ? 'direction:rtl; text-align:right;' : ''}`;
+        const reasonContainerStyle = `margin:8px 0; color:#000000; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal; width:100%; box-sizing:border-box; display:flex; align-items:flex-start; gap:8px; ${isArabic ? 'direction:rtl;' : ''}`;
+        const reasonTextStyle = `flex:1; min-width:0; overflow-wrap:anywhere; word-break:break-word; white-space:normal; ${isArabic ? 'direction:rtl; text-align:right; unicode-bidi:plaintext;' : ''}`;
         card.innerHTML = `
-          <div class="recommendation-title" style="font-weight:600; font-size:1rem; margin:0 0 8px 0; color:#000000; overflow-wrap:anywhere; word-break:break-word; white-space:normal; max-width:100%;">${displayName}</div>
-          <div class="recommendation-reason" style="margin:8px 0; color:#000000; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal; max-width:100%;">
-            <i class="fas fa-lightbulb"></i> ${rec.reason}
+          <div class="recommendation-title" style="${titleStyle}">${displayName}</div>
+          <div class="recommendation-reason" style="${reasonContainerStyle}">
+            <i class="fas fa-lightbulb" style="flex-shrink:0; margin-top:2px;"></i>
+            <span style="${reasonTextStyle}">${rec.reason}</span>
           </div>
-          <div class="recommendation-hours" style="margin-top:4px; font-size:0.9rem; color:#7E9196; display:flex; align-items:center; gap:8px; flex-wrap:wrap; overflow-wrap:anywhere; word-break:break-word; white-space:normal; max-width:100%;">
+          <div class="recommendation-hours" style="margin-top:4px; font-size:0.9rem; color:#7E9196; display:flex; align-items:center; gap:8px; flex-wrap:wrap; width:100%; box-sizing:border-box; ${isArabic ? 'direction:rtl;' : ''}">
             <i class="far fa-clock" style="color:#074D31; flex-shrink:0;"></i>
-            <span style="overflow-wrap:anywhere; word-break:break-word; white-space:normal; max-width:100%;">${UI_TEXT[language].estTime}</span>
-            <strong style="color:#323836; font-weight:600; overflow-wrap:anywhere; word-break:break-word; white-space:normal; max-width:100%;">${hoursText}</strong>
+            <span style="overflow-wrap:anywhere; word-break:break-word; white-space:normal; flex-shrink:1; min-width:0; ${isArabic ? 'direction:rtl; text-align:right;' : ''}">${UI_TEXT[language].estTime}</span>
+            <strong style="color:#323836; font-weight:600; overflow-wrap:anywhere; word-break:break-word; white-space:normal; flex-shrink:1; min-width:0; ${isArabic ? 'direction:rtl; text-align:right;' : ''}">${hoursText}</strong>
             ${rec.rulesApplied && rec.rulesApplied.length > 0
-              ? `<span class="recommendation-rule-inline" style="margin-top:0; font-size:0.85rem; color:#7E9196; font-style:italic; overflow-wrap:anywhere; word-break:break-word; white-space:normal; max-width:100%;"><i class="fas fa-gavel"></i> ${UI_TEXT[language].rulesApplied} ${rec.rulesApplied.join(", ")}</span>`
+              ? `<span class="recommendation-rule-inline" style="margin-top:0; font-size:0.85rem; color:#7E9196; font-style:italic; overflow-wrap:anywhere; word-break:break-word; white-space:normal; flex-shrink:1; min-width:0; ${isArabic ? 'direction:rtl; text-align:right;' : ''}"><i class="fas fa-gavel"></i> ${UI_TEXT[language].rulesApplied} ${rec.rulesApplied.join(", ")}</span>`
               : ""
             }
           </div>
@@ -1225,21 +1238,26 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
         card.style.breakInside = 'avoid';
         card.style.overflowWrap = 'anywhere';
         card.style.wordBreak = 'break-word';
-        card.style.maxWidth = '100%';
+        card.style.width = '100%';
+        card.style.boxSizing = 'border-box';
         //Ghaith's change end
 
         //Ghaith's change start - match exact UI format with icons and inline rules
+        const titleStyle = `font-weight:600; font-size:1rem; margin:0 0 8px 0; color:#323836; overflow-wrap:anywhere; word-break:break-word; white-space:normal; width:100%; box-sizing:border-box; ${isArabic ? 'direction:rtl; text-align:right;' : ''}`;
+        const reasonContainerStyle = `margin:8px 0; color:#323836; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal; width:100%; box-sizing:border-box; display:flex; align-items:flex-start; gap:8px; ${isArabic ? 'direction:rtl;' : ''}`;
+        const reasonTextStyle = `flex:1; min-width:0; overflow-wrap:anywhere; word-break:break-word; white-space:normal; ${isArabic ? 'direction:rtl; text-align:right; unicode-bidi:plaintext;' : ''}`;
         card.innerHTML = `
-          <div class="recommendation-title" style="font-weight:600; font-size:1rem; margin:0 0 8px 0; color:#323836; overflow-wrap:anywhere; word-break:break-word; white-space:normal; max-width:100%;">${displayName}</div>
-          <div class="recommendation-reason" style="margin:8px 0; color:#323836; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal; max-width:100%;">
-            <i class="fas fa-lightbulb"></i> ${rec.reason}
+          <div class="recommendation-title" style="${titleStyle}">${displayName}</div>
+          <div class="recommendation-reason" style="${reasonContainerStyle}">
+            <i class="fas fa-lightbulb" style="flex-shrink:0; margin-top:2px;"></i>
+            <span style="${reasonTextStyle}">${rec.reason}</span>
           </div>
-          <div class="recommendation-hours" style="margin-top:4px; font-size:0.9rem; color:#7E9196; display:flex; align-items:center; gap:8px; flex-wrap:wrap; overflow-wrap:anywhere; word-break:break-word; white-space:normal; max-width:100%;">
+          <div class="recommendation-hours" style="margin-top:4px; font-size:0.9rem; color:#7E9196; display:flex; align-items:center; gap:8px; flex-wrap:wrap; width:100%; box-sizing:border-box; ${isArabic ? 'direction:rtl;' : ''}">
             <i class="far fa-clock" style="color:#074D31; flex-shrink:0;"></i>
-            <span style="overflow-wrap:anywhere; word-break:break-word; white-space:normal; max-width:100%;">${UI_TEXT[language].estTime}</span>
-            <strong style="color:#323836; font-weight:600; overflow-wrap:anywhere; word-break:break-word; white-space:normal; max-width:100%;">${hoursText}</strong>
+            <span style="overflow-wrap:anywhere; word-break:break-word; white-space:normal; flex-shrink:1; min-width:0; ${isArabic ? 'direction:rtl; text-align:right;' : ''}">${UI_TEXT[language].estTime}</span>
+            <strong style="color:#323836; font-weight:600; overflow-wrap:anywhere; word-break:break-word; white-space:normal; flex-shrink:1; min-width:0; ${isArabic ? 'direction:rtl; text-align:right;' : ''}">${hoursText}</strong>
             ${rec.rulesApplied && rec.rulesApplied.length > 0
-              ? `<span class="recommendation-rule-inline" style="margin-top:0; font-size:0.85rem; color:#7E9196; font-style:italic; overflow-wrap:anywhere; word-break:break-word; white-space:normal; max-width:100%;"><i class="fas fa-gavel"></i> ${UI_TEXT[language].rulesApplied} ${rec.rulesApplied.join(", ")}</span>`
+              ? `<span class="recommendation-rule-inline" style="margin-top:0; font-size:0.85rem; color:#7E9196; font-style:italic; overflow-wrap:anywhere; word-break:break-word; white-space:normal; flex-shrink:1; min-width:0; ${isArabic ? 'direction:rtl; text-align:right;' : ''}"><i class="fas fa-gavel"></i> ${UI_TEXT[language].rulesApplied} ${rec.rulesApplied.join(", ")}</span>`
               : ""
             }
           </div>

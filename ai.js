@@ -44,12 +44,19 @@ const RETRY_CONFIG = {
 // ---------------------------------------------------------------------------
 // Proxy + Gemini call - INTEGRATED: Your proxy function
 // ---------------------------------------------------------------------------
-export async function callGeminiProxy(payload) {
-  const response = await fetch(GEMINI_PROXY_URL, {
+export async function callGeminiProxy(payload, signal = null) {
+  const fetchOptions = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
-  });
+  };
+  
+  // Add signal if provided
+  if (signal) {
+    fetchOptions.signal = signal;
+  }
+  
+  const response = await fetch(GEMINI_PROXY_URL, fetchOptions);
 
   if (!response.ok) {
     const error = await response.text();
@@ -120,7 +127,7 @@ export async function callGeminiProxyStream(
 // 16-12-2025 Ghaith's Change End
 
 
-export async function callGeminiAPI(userPrompt, history = [], systemPrompt = "") {
+export async function callGeminiAPI(userPrompt, history = [], systemPrompt = "", signal = null) {
   const formattedHistory = history.map((msg) => ({
     role: msg.isUser ? "user" : "model",
     parts: [{ text: msg.text }],
@@ -136,8 +143,11 @@ export async function callGeminiAPI(userPrompt, history = [], systemPrompt = "")
   ];
 
   const proxyPayload = { prompt: combinedPrompt, history: contents };
-  return await callGeminiProxy(proxyPayload);
+  
+  // Pass signal to the proxy function
+  return await callGeminiProxy(proxyPayload, signal);
 }
+
 
 // ---------------------------------------------------------------------------
 // Chat UI helpers (markdown + typing indicator)
@@ -518,7 +528,7 @@ function generateCvPromptFromStructuredData(cv) {
  * NEW: Analyzes a single CV and returns recommendations for just that person.
  * Includes robust JSON extraction to handle AI chatter.
  */
-export async function analyzeSingleCvWithAI(cv, rulesArray, language = 'en', maxRetries = 3) {
+export async function analyzeSingleCvWithAI(cv, rulesArray, language = 'en', maxRetries = 3, signal = null) {
   const catalogString = getCatalogAsPromptString();
   //Ghaith's change start
   const trainingCatalogString = getTrainingCoursesCatalogAsPromptString();
@@ -607,7 +617,7 @@ Provide recommendations for this specific candidate in strict JSON format.
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      const rawResponse = await callGeminiAPI(prompt, [], "");
+const rawResponse = await callGeminiAPI(prompt, [], "", signal);
 
       // --- ROBUST JSON EXTRACTION LOGIC (Joud's code) ---
       let cleaned = rawResponse.trim();

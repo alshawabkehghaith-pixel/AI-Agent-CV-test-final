@@ -899,9 +899,8 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
   pdfContainer.style.paddingRight = '5px';
   //Ghaith's change end
   if (isArabic) {
-    // Keep layout LTR (left-to-right) for card alignment, but text content will be RTL via individual element styles
-    pdfContainer.style.direction = 'ltr';
-    pdfContainer.style.textAlign = 'left';
+    pdfContainer.style.direction = 'rtl';
+    pdfContainer.style.textAlign = 'right';
     pdfContainer.style.fontFamily = "'Cairo', sans-serif"; 
   } else {
     pdfContainer.style.fontFamily = "'Roboto', sans-serif";
@@ -982,6 +981,11 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
     .stacked-bar .segment-hours { font-size: 10.5px; }
     .stacked-labels .segment-label { font-size: 10.5px; }
     .total-label { font-size: 11.5px; }
+    /* Arabic RTL support for PDF recommendation-reason (mirror UI behavior) */
+    .pdf-content[style*="direction: rtl"] .recommendation-reason {
+      direction: rtl;
+      text-align: right;
+    }
     /*Ghaith's change end */
   `;
   pdfContainer.appendChild(pdfStyle);
@@ -1137,8 +1141,10 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
         //Ghaith's change end
 
         //Ghaith's change start - match exact UI format with icons and inline rules
-        // Match UI structure exactly: just icon + text, let browser handle bidi with natural RTL/LTR
-        const reasonStyle = "margin:8px 0; color:#000000; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal;";
+        // Match UI structure exactly: just icon + text, explicitly set RTL for Arabic PDF
+        const reasonStyle = isArabic 
+          ? "margin:8px 0; color:#000000; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal; direction:rtl; text-align:right;"
+          : "margin:8px 0; color:#000000; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal;";
         // Preprocess reason text for PDF to prevent overlapping when multiple English words appear consecutively
         const pdfReason = prepareReasonForPdf(rec.reason, isArabic);
         card.innerHTML = `
@@ -1298,8 +1304,10 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
         //Ghaith's change end
 
         //Ghaith's change start - match exact UI format with icons and inline rules
-        // Match UI structure exactly: just icon + text, let browser handle bidi with natural RTL/LTR
-        const trainingReasonStyle = "margin:8px 0; color:#323836; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal;";
+        // Match UI structure exactly: just icon + text, explicitly set RTL for Arabic PDF
+        const trainingReasonStyle = isArabic 
+          ? "margin:8px 0; color:#323836; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal; direction:rtl; text-align:right;"
+          : "margin:8px 0; color:#323836; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal;";
         // Preprocess reason text for PDF to prevent overlapping when multiple English words appear consecutively
         const trainingPdfReason = prepareReasonForPdf(rec.reason, isArabic);
         card.innerHTML = `
@@ -2502,7 +2510,6 @@ if (stopGenerationBtn) {
     });
   }
 });
-
 
 
 

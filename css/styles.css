@@ -702,7 +702,29 @@ background: linear-gradient(90deg,var(#074D31), var(#074D31));
  }
 
 /* === RESULTS === */
-.results-section { margin-top: var(--space-l); padding: var(--space-m); border-radius: var(--radius-md); box-shadow: var(--card-shadow); background: var(--card-bg); }
+.results-section {
+  margin-top: var(--space-l);
+  padding: var(--space-m);
+  border-radius: var(--radius-md);
+  box-shadow: var(--card-shadow);
+  background: var(--card-bg);
+}
+
+/* Recommendations header (star + title) */
+.results-section > h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 var(--space-m) 0;
+}
+
+/* In Arabic, right-align header and move star to the right */
+html[lang="ar"] .results-section > h2 {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  text-align: right;
+}
+
 .candidate-result { padding: var(--space-s) 0; }
 .candidate-cv-name { color: var(--text); font-size: 0.9rem; margin: 0 0 var(--space-xs) 0; font-weight: 400; }
 .candidate-name { color: var(--primary); font-size: 1.05rem; margin: 0 0 var(--space-xs) 0; }
@@ -1720,7 +1742,13 @@ html[lang="ar"] #recommendations-container .recommendation-rule {
 #recommendations-container .recommendation-card {
   padding: 8px 10px;
   font-size: 0.90rem;
- }
+}
+
+/* Move orange accent border to the right in Arabic mode */
+html[lang="ar"] #recommendations-container .recommendation-card {
+  border-right: 4px solid var(--secondary);
+  border-left: none;
+}
 
 #recommendations-container .recommendation-title {
   font-size: 0.95rem;

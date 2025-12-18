@@ -874,11 +874,23 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
 
   // Helper function to prepare reason text for PDF (prevents overlapping in Arabic with consecutive English words)
   function prepareReasonForPdf(reason, isArabic) {
-    if (!isArabic) return reason;
-    
-    // Insert zero-width space after English words/numbers to help PDF renderer break lines correctly
-    // This prevents overlapping when multiple English words appear consecutively in Arabic text
-    return reason.replace(/([A-Za-z0-9)(]+)(\s+)/g, '$1\u200B$2');
+    if (!isArabic || !reason) return reason;
+
+    let processed = reason;
+
+    // 1) Add zero-width space AFTER English words/numbers followed by space
+    processed = processed.replace(/([A-Za-z0-9)(]+)(\s+)/g, '$1\u200B$2');
+
+    // 2) Add zero-width space BEFORE English words/numbers preceded by space
+    processed = processed.replace(/(\s+)([A-Za-z0-9)(]+)/g, '$1\u200B$2');
+
+    // 3) For sequences of 3+ English words, add extra breaks between them
+    processed = processed.replace(/([A-Za-z]+(?:\s+[A-Za-z]+){2,})/g, (match) => {
+      // Insert zero-width space before each space inside the long English run
+      return match.replace(/\s+/g, '\u200B$&');
+    });
+
+    return processed;
   }
 
   // --- PDF GENERATION LOGIC ---
@@ -2510,7 +2522,6 @@ if (stopGenerationBtn) {
     });
   }
 });
-
 
 
 

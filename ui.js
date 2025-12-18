@@ -428,16 +428,7 @@ function createRuleInput(ruleText = "") {
   deleteBtn.addEventListener("click", (e) => {
     e.preventDefault();
     wrapper.remove();
-    //18-12-2025 liyan's updates 
-      const currentRules = getRulesFromUI();
-      saveUserRules(currentRules);
-    });
-
-    input.addEventListener("input", () => {
-        const currentRules = getRulesFromUI();
-        saveUserRules(currentRules);
-      });
-      //18-12-2025 end liyan's updates 
+  });
 
   wrapper.appendChild(input);
   wrapper.appendChild(deleteBtn);
@@ -2160,11 +2151,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       });
     }
-    
+
     const rules = getRulesFromUI();
-    /* 18-12-2025 liyan's updates */
-     saveUserRules(rules);
-    /* 18-12-2025 end liyan's updates */
     const cvArray = submittedCvData.filter(cv => cv.selected);
 
     allRecommendationsMap = {};
@@ -2417,17 +2405,12 @@ if (stopGenerationBtn) {
           }
         }
         
-         if (!hasEmptyInput) {
-            const newInput = createRuleInput();
-            container.appendChild(newInput);
-            const input = newInput.querySelector('input');
-            if (input) input.focus();
-            //18-12-2025 liyan's updates
-            const currentRules = getRulesFromUI();
-            saveUserRules(currentRules);
-            //18-12-2025 end liyan's updates
-            
-          }
+        if (!hasEmptyInput) {
+          const newInput = createRuleInput();
+          container.appendChild(newInput);
+          const input = newInput.querySelector('input');
+          if (input) input.focus();
+        }
         //Ghaith's change end
       }
     });
@@ -2534,12 +2517,6 @@ if (stopGenerationBtn) {
     });
   }
 });
-
-
-
-
-
-
 
 
 

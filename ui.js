@@ -1541,9 +1541,9 @@ function renderCvDetails(cv) {
     container.innerHTML = `<div class="status-message"><div class="loader"></div> ${getStatusText('analyzing')}</div>`;
       return;
   }
-
-  const t = (k) => getUiText(k);
-
+  // 18-12-2025 joud start
+  const t = (k) => UI_TEXT['en'][k];
+  // 18-12-2025 joud end
   const sections = [
     {
       key: "experience",
@@ -1685,7 +1685,7 @@ function openCvModal(allCvResults, initialIndex = 0) {
   });
 
   renderCvDetails(modalCvData[initialIndex] || modalCvData[0]);
-  if (submitBtn) submitBtn.textContent = modalCvData.length > 1 ? getUiText("submitAll") : getUiText("submitSingle");
+  if (submitBtn) submitBtn.textContent = modalCvData.length > 1 ? UI_TEXT['en']["submitAll"] : UI_TEXT['en']["submitSingle"];               
 }
 
 const upsertAndRenderSubmittedCvs = (cvResultsForModal) => {
@@ -2517,6 +2517,7 @@ if (stopGenerationBtn) {
     });
   }
 });
+
 
 
 

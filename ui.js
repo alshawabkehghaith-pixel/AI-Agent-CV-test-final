@@ -1127,13 +1127,12 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
         //Ghaith's change end
 
         //Ghaith's change start - match exact UI format with icons and inline rules
-        const reasonStyle = isArabic 
-          ? "margin:8px 0; color:#000000; line-height:1.6; direction:rtl; text-align:right;"
-          : "margin:8px 0; color:#000000; line-height:1.6;";
-        // Make reason text bidi-safe (Arabic + English) for PDF
+        // Don't force direction on container - let dir="auto" on span handle it naturally (like UI)
+        const reasonStyle = "margin:8px 0; color:#000000; line-height:1.6;";
+        // Make reason text bidi-safe (Arabic + English) for PDF - let browser decide direction
         const certReasonHtml = `
           <span dir="auto"
-                style="unicode-bidi:plaintext; overflow-wrap:anywhere; word-break:break-word; white-space:normal;">
+                style="unicode-bidi:plaintext; overflow-wrap:anywhere; word-break:break-word; white-space:normal; display:inline;">
             ${rec.reason}
           </span>
         `;
@@ -1294,12 +1293,11 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
         //Ghaith's change end
 
         //Ghaith's change start - match exact UI format with icons and inline rules
-        const trainingReasonStyle = isArabic 
-          ? "margin:8px 0; color:#323836; line-height:1.6; direction:rtl; text-align:right;"
-          : "margin:8px 0; color:#323836; line-height:1.6;";
+        // Don't force direction on container - let dir="auto" on span handle it naturally (like UI)
+        const trainingReasonStyle = "margin:8px 0; color:#323836; line-height:1.6;";
         const trainingReasonHtml = `
           <span dir="auto"
-                style="unicode-bidi:plaintext; overflow-wrap:anywhere; word-break:break-word; white-space:normal;">
+                style="unicode-bidi:plaintext; overflow-wrap:anywhere; word-break:break-word; white-space:normal; display:inline;">
             ${rec.reason}
           </span>
         `;
@@ -2503,7 +2501,6 @@ if (stopGenerationBtn) {
     });
   }
 });
-
 
 
 

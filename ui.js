@@ -2153,9 +2153,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     
     const rules = getRulesFromUI();
-    /* 18-12-2025 liyan's updates */
-    saveUserRules(rules);
-    /* 18-12-2025 end liyan's updates */
     const cvArray = submittedCvData.filter(cv => cv.selected);
 
     allRecommendationsMap = {};
@@ -2520,6 +2517,7 @@ if (stopGenerationBtn) {
     });
   }
 });
+
 
 
 

@@ -195,11 +195,20 @@ export function buildChatSystemPrompt(uploadedCvs) {
   //Ghaith's change end
   const hasCvContext = uploadedCvs.length > 0;
   
-  // Safe handling if structured data is not yet parsed (isParsing=true)
+  // 18-12-2025 joud start
   const cvContext = hasCvContext
+  let cvContext = "";
+  if (hasCvContext) {
+    const cvsContent = uploadedCvs.map((cv, index) =>
+      `[CV ${index + 1}: ${cv.name}]\n${cv.text}\n-------------------`
+    ).join("\n");
     ? `\n\n**Available CV Context:**\nThe user has uploaded ${uploadedCvs.length} CV(s). You can reference their experience, skills, and background when making recommendations.`
+    cvContext = `\n\n**Available CV Context:**\nThe user has uploaded ${uploadedCvs.length} CV(s). Here is their full content:\n\n${cvsContent}\n\nYou can reference this experience, skills, and background when answering questions.`;
     : `\n\n**Note:** The user has not uploaded a CV yet. You can still answer general questions about certifications, but for personalized recommendations, encourage them to upload their CV.`;
-
+  } else {
+    cvContext = `\n\n**Note:** The user has not uploaded a CV yet...`;
+  }
+  // 18-12-2025 joud end
   return `${CHAT_SYSTEM_PROMPT_BASE.trim()}
 
 **Available Certifications Catalog:**
@@ -1184,3 +1193,4 @@ Return the translated JSON object starting with { and ending with }:`;
 
 // Re-export utility used in UI for CV summary
 export { calculateTotalExperience };
+

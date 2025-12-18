@@ -279,7 +279,7 @@ function updateLanguage(lang) {
       firstMsg.innerHTML = UI_TEXT[lang].welcomeMessage;
     }
   }
-  // 18-12-2025 joud start
+
   const currentRulesFromUI = getRulesFromUI();
   const prevLang = lang === 'en' ? 'ar' : 'en';
   const prevDefaults = prevLang === 'en' ? DEFAULT_RULES_EN : DEFAULT_RULES_AR;
@@ -305,7 +305,7 @@ function updateLanguage(lang) {
   userRules = updatedRules;
   initializeRulesUI(userRules);
   saveUserRules(userRules);
-  // 18-12-2025 joud end
+
   if (submittedCvData.length > 0) {
     renderSubmittedCvBubbles(submittedCvData);
   }
@@ -874,8 +874,7 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
   pdfContainer.style.paddingRight = '5px';
   //Ghaith's change end
   if (isArabic) {
-    // Keep layout LTR but right-aligned; let text itself decide direction
-    pdfContainer.style.direction = 'ltr';
+    pdfContainer.style.direction = 'rtl';
     pdfContainer.style.textAlign = 'right';
     pdfContainer.style.fontFamily = "'Cairo', sans-serif"; 
   } else {
@@ -1083,12 +1082,13 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
         //Ghaith's change end
 
         //Ghaith's change start - match exact UI format with icons and inline rules
-        // Make reason text bidi-aware in PDF (fix Arabic + English overlap)
-        const reasonHtml = `<span dir="auto" style="unicode-bidi:plaintext; overflow-wrap:anywhere; word-break:break-word; white-space:normal;">${rec.reason}</span>`;
+        const reasonStyle = isArabic 
+          ? "margin:8px 0; color:#000000; line-height:1.6; direction:rtl; text-align:right;"
+          : "margin:8px 0; color:#000000; line-height:1.6;";
         card.innerHTML = `
           <div class="recommendation-title" style="font-weight:600; font-size:1rem; margin:0 0 8px 0; color:#000000;">${displayName}</div>
-          <div class="recommendation-reason" style="margin:8px 0; color:#000000; line-height:1.6;">
-            <i class="fas fa-lightbulb"></i> ${reasonHtml}
+          <div class="recommendation-reason" style="${reasonStyle}">
+            <i class="fas fa-lightbulb"></i> ${rec.reason}
           </div>
           <div class="recommendation-hours" style="margin-top:4px; font-size:0.9rem; color:#7E9196; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
             <i class="far fa-clock" style="color:#074D31;"></i>
@@ -1242,12 +1242,13 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
         //Ghaith's change end
 
         //Ghaith's change start - match exact UI format with icons and inline rules
-        // Make reason text bidi-aware in PDF (fix Arabic + English overlap)
-        const trainingReasonHtml = `<span dir="auto" style="unicode-bidi:plaintext; overflow-wrap:anywhere; word-break:break-word; white-space:normal;">${rec.reason}</span>`;
+        const trainingReasonStyle = isArabic 
+          ? "margin:8px 0; color:#323836; line-height:1.6; direction:rtl; text-align:right;"
+          : "margin:8px 0; color:#323836; line-height:1.6;";
         card.innerHTML = `
           <div class="recommendation-title" style="font-weight:600; font-size:1rem; margin:0 0 8px 0; color:#323836;">${displayName}</div>
-          <div class="recommendation-reason" style="margin:8px 0; color:#323836; line-height:1.6;">
-            <i class="fas fa-lightbulb"></i> ${trainingReasonHtml}
+          <div class="recommendation-reason" style="${trainingReasonStyle}">
+            <i class="fas fa-lightbulb"></i> ${rec.reason}
           </div>
           <div class="recommendation-hours" style="margin-top:4px; font-size:0.9rem; color:#7E9196; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
             <i class="far fa-clock" style="color:#074D31;"></i>
@@ -2346,7 +2347,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
-
 
 
 

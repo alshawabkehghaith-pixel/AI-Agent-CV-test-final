@@ -140,6 +140,7 @@ export function loadSubmittedCvs() {
     return [];
   }
 }
+//18-12-2025 joud start
 export function saveLanguagePreference(lang) {
   try {
     localStorage.setItem(LANGUAGE_KEY, lang);
@@ -153,6 +154,7 @@ export function loadLanguagePreference() {
   // Return saved language, or default to 'en' if not found
   return saved === 'ar' || saved === 'en' ? saved : 'en'; 
 }
+//18-12-2025 joud end
 // --- Catalog loading/persistence ---
 export async function loadCertificateCatalog() {
   await initializeCertificates();
@@ -352,4 +354,5 @@ export function calculateTotalExperience(experienceArray) {
   });
   return Math.round(totalYears * 10) / 10;
 }
+
 

@@ -1137,8 +1137,8 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
         //Ghaith's change end
 
         //Ghaith's change start - match exact UI format with icons and inline rules
-        // Force text direction to LTR (left-to-right) for both Arabic and English PDFs
-        const reasonStyle = "margin:8px 0; color:#000000; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal; direction:ltr; text-align:left; unicode-bidi:bidi-override;";
+        // Match UI structure exactly: just icon + text, let browser handle bidi with natural RTL/LTR
+        const reasonStyle = "margin:8px 0; color:#000000; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal;";
         // Preprocess reason text for PDF to prevent overlapping when multiple English words appear consecutively
         const pdfReason = prepareReasonForPdf(rec.reason, isArabic);
         card.innerHTML = `
@@ -1298,8 +1298,8 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
         //Ghaith's change end
 
         //Ghaith's change start - match exact UI format with icons and inline rules
-        // Force text direction to LTR (left-to-right) for both Arabic and English PDFs
-        const trainingReasonStyle = "margin:8px 0; color:#323836; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal; direction:ltr; text-align:left; unicode-bidi:bidi-override;";
+        // Match UI structure exactly: just icon + text, let browser handle bidi with natural RTL/LTR
+        const trainingReasonStyle = "margin:8px 0; color:#323836; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal;";
         // Preprocess reason text for PDF to prevent overlapping when multiple English words appear consecutively
         const trainingPdfReason = prepareReasonForPdf(rec.reason, isArabic);
         card.innerHTML = `

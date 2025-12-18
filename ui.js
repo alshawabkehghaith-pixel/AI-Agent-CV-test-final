@@ -285,18 +285,26 @@ function updateLanguage(lang) {
   const prevDefaults = prevLang === 'en' ? DEFAULT_RULES_EN : DEFAULT_RULES_AR;
   const newDefaults = lang === 'en' ? DEFAULT_RULES_EN : DEFAULT_RULES_AR;
 
-  const isUsingDefaults = JSON.stringify(currentRulesFromUI) === JSON.stringify(prevDefaults);
-
-  if (isUsingDefaults) {
-    userRules = [...newDefaults];
-    initializeRulesUI(userRules);
-    saveUserRules(userRules);
-  } else {
-    const ruleInputs = document.querySelectorAll('.rule-input');
-    ruleInputs.forEach(input => {
-      input.placeholder = UI_TEXT[lang].enterRule;
+  // Create a map of "Previous Default Rule" -> "New Default Rule"
+  const defaultMap = new Map();
+  if (prevDefaults && newDefaults) {
+    prevDefaults.forEach((rule, index) => {
+      // Map by index assuming the arrays are parallel (Rule 1 EN matches Rule 1 AR)
+      if (newDefaults[index]) {
+        defaultMap.set(rule, newDefaults[index]);
+      }
     });
   }
+
+  // Iterate through current rules: if it's a default, translate it; otherwise keep it
+  const updatedRules = currentRulesFromUI.map(rule => {
+    return defaultMap.has(rule) ? defaultMap.get(rule) : rule;
+  });
+
+  // Save and Re-render
+  userRules = updatedRules;
+  initializeRulesUI(userRules);
+  saveUserRules(userRules);
 
   if (submittedCvData.length > 0) {
     renderSubmittedCvBubbles(submittedCvData);
@@ -2349,6 +2357,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+
 
 
 

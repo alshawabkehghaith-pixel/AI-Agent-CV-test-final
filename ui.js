@@ -972,6 +972,11 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
     .stacked-bar .segment-hours { font-size: 10.5px; }
     .stacked-labels .segment-label { font-size: 10.5px; }
     .total-label { font-size: 11.5px; }
+    /* Arabic RTL support for PDF recommendation-reason (mirror UI behavior) */
+    .pdf-content[style*="direction: rtl"] .recommendation-reason {
+      direction: rtl;
+      text-align: right;
+    }
     /*Ghaith's change end */
   `;
   pdfContainer.appendChild(pdfStyle);

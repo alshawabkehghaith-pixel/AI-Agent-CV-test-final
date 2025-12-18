@@ -1003,8 +1003,15 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
     nameHeader.style.marginTop = '4px';
     nameHeader.style.marginBottom = '6px';
     // 16-12-2025 Ghaith's Change End
-    nameHeader.textContent = `${UI_TEXT[language].pdfCandidate}: ${displayCandidateName}`;
-    // Improve mixed Arabic/English handling for candidate header
+    let candidateLine;
+    if (isArabic) {
+      // Show as "English :المرشح"
+      candidateLine = `${displayCandidateName} :${UI_TEXT[language].pdfCandidate}`;
+    } else {
+      candidateLine = `${UI_TEXT[language].pdfCandidate}: ${displayCandidateName}`;
+    }
+    nameHeader.textContent = candidateLine;
+    // Bidi-safe and wrapped
     nameHeader.dir = 'auto';
     nameHeader.style.unicodeBidi = 'plaintext';
     nameHeader.style.overflowWrap = 'anywhere';
@@ -1021,8 +1028,15 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
         fileDiv.style.marginBottom = '4px';
       }
       //Ghaith's change end
-      fileDiv.textContent = `${UI_TEXT[language].pdfFile}: ${candidate.cvName}`;
-      // Improve mixed Arabic/English handling for file name line
+      let fileLine;
+      if (isArabic) {
+        // Show as "cv_sample1.pdf :الملف"
+        fileLine = `${candidate.cvName} :${UI_TEXT[language].pdfFile}`;
+      } else {
+        fileLine = `${UI_TEXT[language].pdfFile}: ${candidate.cvName}`;
+      }
+      fileDiv.textContent = fileLine;
+      // Bidi-safe and wrapped
       fileDiv.dir = 'auto';
       fileDiv.style.unicodeBidi = 'plaintext';
       fileDiv.style.overflowWrap = 'anywhere';
@@ -1041,7 +1055,7 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
       introDiv.style.lineHeight = '1.6';
       introDiv.style.color = '#000000';
       introDiv.textContent = candidate.recommendationIntro;
-      // Bidi-safe intro (Arabic + English)
+      // Bidi-safe intro line
       introDiv.dir = 'auto';
       introDiv.style.unicodeBidi = 'plaintext';
       introDiv.style.overflowWrap = 'anywhere';

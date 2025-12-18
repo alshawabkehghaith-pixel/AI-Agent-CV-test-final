@@ -279,7 +279,7 @@ function updateLanguage(lang) {
       firstMsg.innerHTML = UI_TEXT[lang].welcomeMessage;
     }
   }
-
+  // 18-12-2025 joud start
   const currentRulesFromUI = getRulesFromUI();
   const prevLang = lang === 'en' ? 'ar' : 'en';
   const prevDefaults = prevLang === 'en' ? DEFAULT_RULES_EN : DEFAULT_RULES_AR;
@@ -305,7 +305,7 @@ function updateLanguage(lang) {
   userRules = updatedRules;
   initializeRulesUI(userRules);
   saveUserRules(userRules);
-
+  // 18-12-2025 joud end
   if (submittedCvData.length > 0) {
     renderSubmittedCvBubbles(submittedCvData);
   }
@@ -2346,6 +2346,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+
 
 
 

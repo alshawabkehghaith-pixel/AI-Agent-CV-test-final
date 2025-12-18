@@ -31,6 +31,10 @@ import {
   saveSubmittedCvs, // Imported
   loadSubmittedCvs, // Imported
   // 12-15-2025 joud end
+  //18-12-2025 jous start
+  saveLanguagePreference,
+  loadLanguagePreference,
+  //18-12-2025 jous end
 } from "./storage-catalog.js";
 
 import {
@@ -349,13 +353,20 @@ function updateLanguage(lang) {
       }
     })();
   }
+  //18-12-2025 joud start
+  saveLanguagePreference(lang);
+  //18-12-2025 joud end
 }
 // 14-12-2025 Ending Taif's updates
 
 function initializeLanguage() {
   const toggleBtn = document.getElementById('language-toggle');
-  updateLanguage('en');
-
+  // --- 18-12-2025 joud start ---
+  // Old line was: updateLanguage('en');
+  // New logic: Load saved language, or default to 'en'
+  const savedLang = loadLanguagePreference();
+  updateLanguage(savedLang);
+  // --- 18-12-2025 joud end ---
   if (toggleBtn) {
     toggleBtn.addEventListener('click', () => {
       const newLang = currentLang === 'en' ? 'ar' : 'en';
@@ -2349,6 +2360,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+
 
 
 

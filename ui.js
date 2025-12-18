@@ -289,59 +289,28 @@ function updateLanguage(lang) {
     }
   }
 
-  // 18-12-2025 liyan's updates
-  const chatMessagesContainer = document.getElementById("chat-messages");
-  if (chatMessagesContainer && chatHistory.length > 0) {
-    // Clear container but keep the translated welcome message at the top
-    chatMessagesContainer.innerHTML = `<div class="message bot-message">${UI_TEXT[lang].welcomeMessage}</div>`;
-    
-    // Show typing indicator during the translation process
-    showTypingIndicator();
-    
-    (async () => {
-      try {
-        const { translateChatHistory } = await import("./ai.js");
-        // Request AI translation of the entire history array
-        const translatedHistory = await translateChatHistory(chatHistory, lang);
-        
-        // Update the global state with translated text
-        chatHistory = translatedHistory;
-        saveChatHistory(chatHistory);
-        
-        // Remove indicator and re-render translated bubbles
-        hideTypingIndicator();
-        chatHistory.forEach(msg => addMessage(msg.text, msg.isUser));
-        
-        // Auto-scroll to the latest message
-        chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
-      } catch (err) {
-        console.error("Chat translation failed:", err);
-        hideTypingIndicator();
-        // Fallback: re-render original history if AI service fails
-        chatHistory.forEach(msg => addMessage(msg.text, msg.isUser));
-      }
-    })();
-  }
-  // 18-12-2025 end liyan's updates
-
   const currentRulesFromUI = getRulesFromUI();
   const prevLang = lang === 'en' ? 'ar' : 'en';
   const prevDefaults = prevLang === 'en' ? DEFAULT_RULES_EN : DEFAULT_RULES_AR;
   const newDefaults = lang === 'en' ? DEFAULT_RULES_EN : DEFAULT_RULES_AR;
 
+  // Create a map of "Previous Default Rule" -> "New Default Rule"
   const defaultMap = new Map();
   if (prevDefaults && newDefaults) {
     prevDefaults.forEach((rule, index) => {
+      // Map by index assuming the arrays are parallel (Rule 1 EN matches Rule 1 AR)
       if (newDefaults[index]) {
         defaultMap.set(rule, newDefaults[index]);
       }
     });
   }
 
+  // Iterate through current rules: if it's a default, translate it; otherwise keep it
   const updatedRules = currentRulesFromUI.map(rule => {
     return defaultMap.has(rule) ? defaultMap.get(rule) : rule;
   });
 
+  // Save and Re-render
   userRules = updatedRules;
   initializeRulesUI(userRules);
   saveUserRules(userRules);
@@ -353,10 +322,12 @@ function updateLanguage(lang) {
   const recommendationsContainer = document.getElementById("recommendations-container");
   const resultsSection = document.getElementById("results-section");
 
+  // Check if there are selected CVs - if so, regenerate recommendations in the new language
   const selectedCvs = submittedCvData.filter(cv => cv.selected);
   const generateBtn = document.getElementById("generate-recommendations-btn");
   
   if (selectedCvs.length > 0 && generateBtn && !generateBtn.disabled) {
+    // Automatically trigger recommendation generation in the new language
     generateBtn.click();
   } else if (
     recommendationsContainer &&
@@ -364,7 +335,9 @@ function updateLanguage(lang) {
     lastRecommendations.candidates &&
     lastRecommendations.candidates.length > 0
   ) {
+    // If no selected CVs but we have existing recommendations, translate them
     recommendationsContainer.innerHTML = `<div class="loader"></div>`;
+    // Hide download button while recommendations are being re-generated / translated
     updateDownloadButtonVisibility(lastRecommendations);
 
     (async () => {
@@ -385,7 +358,6 @@ function updateLanguage(lang) {
       }
     })();
   }
-  
   //18-12-2025 joud start
   saveLanguagePreference(lang);
   //18-12-2025 joud end

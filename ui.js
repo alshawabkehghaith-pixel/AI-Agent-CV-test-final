@@ -89,8 +89,8 @@ const UI_TEXT = {
     saveSession: "Keep My Data",
     // 12-15-2025 joud end
     downloadBtn: "Download Recommendations (PDF)",
-        stopBtn: "Stop",
-    generationStopped: "Generation stopped by user",
+        stopBtn: "Stop Recommendation Generation",
+    generationStopped: "Recommendation generation was stopped by the user",
     welcomeMessage: `As-salamu alaykum! I'm your Training and Certification Assistant.
 I'm here to help you identify the best learning paths for your team. Follow these steps to get started:
 
@@ -147,8 +147,8 @@ I'm here to help you identify the best learning paths for your team. Follow thes
     rulesTitle: "قواعد العمل",
     optional: "اختياري",
     addRule: "إضافة قاعدة",
-        stopBtn: "إيقاف",
-    generationStopped: "تم إيقاف الإصدار بواسطة المستخدم",
+        stopBtn: "إيقاف إنشاء التوصيات",
+    generationStopped: "تم إيقاف إصدار التوصيات بواسطة المستخدم",
     generateBtn: "إصدار التوصيات",
     uploadedCvs: "السير الذاتية المرفوعة",
     reviewTitle: "مراجعة التحليل",
@@ -2503,6 +2503,7 @@ if (stopGenerationBtn) {
     });
   }
 });
+
 
 
 

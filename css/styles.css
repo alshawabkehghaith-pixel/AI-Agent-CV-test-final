@@ -1688,6 +1688,20 @@ html[lang="ar"] .recommendation-intro {
   font-size: 0.90rem;
   line-height: 1.35;
  }
+
+/* Arabic layout for recommendations section (UI) */
+html[lang="ar"] #recommendations-container,
+html[lang="ar"] #recommendations-container .candidate-result,
+html[lang="ar"] #recommendations-container .recommendation-card,
+html[lang="ar"] #recommendations-container .recommendation-intro,
+html[lang="ar"] #recommendations-container .recommendation-title,
+html[lang="ar"] #recommendations-container .recommendation-reason,
+html[lang="ar"] #recommendations-container .recommendation-hours,
+html[lang="ar"] #recommendations-container .recommendation-rule {
+  direction: rtl;
+  text-align: right;
+}
+
 #recommendations-container .candidate-result {
   gap: 6px;
  }

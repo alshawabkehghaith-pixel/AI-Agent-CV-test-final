@@ -62,7 +62,8 @@ let submittedCvData = [];
 let allRecommendationsMap = {};
 let lastRecommendations = { candidates: [] }; 
 let userRules = [];
-
+let abortController = null; // Controls the generation cancellation
+let isGenerating = false;   // Tracks generation state
 // --- TRANSLATION DICTIONARY ---
 // Starting Taif's updates
 const UI_TEXT = {
@@ -88,6 +89,8 @@ const UI_TEXT = {
     saveSession: "Keep My Data",
     // 12-15-2025 joud end
     downloadBtn: "Download Recommendations (PDF)",
+        stopBtn: "Stop",
+    generationStopped: "Generation stopped by user",
     welcomeMessage: `As-salamu alaykum! I'm your Training and Certification Assistant.
 I'm here to help you identify the best learning paths for your team. Follow these steps to get started:
 
@@ -144,6 +147,8 @@ I'm here to help you identify the best learning paths for your team. Follow thes
     rulesTitle: "قواعد العمل",
     optional: "اختياري",
     addRule: "إضافة قاعدة",
+        stopBtn: "إيقاف",
+    generationStopped: "تم إيقاف الإصدار بواسطة المستخدم",
     generateBtn: "إصدار التوصيات",
     uploadedCvs: "السير الذاتية المرفوعة",
     reviewTitle: "مراجعة التحليل",
@@ -2095,89 +2100,185 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  if (generateBtn) {
-    generateBtn.addEventListener("click", async () => {
-      function setButtonLoading(btn, loading) {
-          if(loading) { btn.disabled = true; btn.innerHTML = '<div class="loader"></div>'; }
-          else { btn.disabled = false; btn.innerHTML = getUiText('generateBtn'); }
+ if (generateBtn) {
+  generateBtn.addEventListener("click", async () => {
+    function setButtonLoading(btn, loading) {
+      if (loading) {
+        btn.disabled = true;
+        btn.innerHTML = '<div class="loader"></div>';
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = getUiText('generateBtn');
       }
+    }
 
-      setButtonLoading(generateBtn, true);
-      recommendationsContainer.innerHTML = "";
-      resultsSection.classList.remove("hidden");
-      // NOTE: no automatic scrolling here; user controls page scroll
+    // Show stop button, hide it when done
+    const stopBtn = document.getElementById("stop-generation-btn");
+    if (stopBtn) {
+      stopBtn.classList.remove("hidden");
+    }
 
-      //Ghaith's change start - remove empty business rule inputs before generating
-      const rulesContainer = document.getElementById("rules-container");
-      if (rulesContainer) {
-        const ruleInputs = rulesContainer.querySelectorAll(".rule-input");
-        ruleInputs.forEach(input => {
-          if (!input.value.trim()) {
-            const wrapper = input.closest(".rule-input-wrapper");
-            if (wrapper) wrapper.remove();
-          }
-        });
-      }
-      //Ghaith's change end
+    // Create new abort controller
+    abortController = new AbortController();
+    isGenerating = true;
 
-      const rules = getRulesFromUI();
-      // const cvArray = submittedCvData; replaced this line with the below line 
-      const cvArray = submittedCvData.filter(cv => cv.selected); 
-      
-      allRecommendationsMap = {}; 
-      lastRecommendations = { candidates: [] };
-      saveLastRecommendations(lastRecommendations);
-      // Hide download button while fresh recommendations are being generated
-      updateDownloadButtonVisibility(lastRecommendations);
-      // added below function for CV Selection //Start
-      if (cvArray.length === 0) {
-        setButtonLoading(generateBtn, false);
-        alert(currentLang === 'ar'
-          ? "يرجى اختيار سيرة ذاتية واحدة على الأقل"
-          : "Please select at least one CV");
-        return;
-      }
-      // End
-      let completedCount = 0;
+    setButtonLoading(generateBtn, true);
+    recommendationsContainer.innerHTML = "";
+    resultsSection.classList.remove("hidden");
+
+    // Remove empty business rule inputs
+    const rulesContainer = document.getElementById("rules-container");
+    if (rulesContainer) {
+      const ruleInputs = rulesContainer.querySelectorAll(".rule-input");
+      ruleInputs.forEach(input => {
+        if (!input.value.trim()) {
+          const wrapper = input.closest(".rule-input-wrapper");
+          if (wrapper) wrapper.remove();
+        }
+      });
+    }
+
+    const rules = getRulesFromUI();
+    const cvArray = submittedCvData.filter(cv => cv.selected);
+
+    allRecommendationsMap = {};
+    lastRecommendations = { candidates: [] };
+    saveLastRecommendations(lastRecommendations);
+    updateDownloadButtonVisibility(lastRecommendations);
+
+    if (cvArray.length === 0) {
+      setButtonLoading(generateBtn, false);
+      if (stopBtn) stopBtn.classList.add("hidden");
+      isGenerating = false;
+      alert(currentLang === 'ar'
+        ? "يرجى اختيار سيرة ذاتية واحدة على الأقل"
+        : "Please select at least one CV");
+      return;
+    }
+
+    let completedCount = 0;
+    let stoppedByUser = false;
+
+    try {
       for (const cv of cvArray) {
+        // Check if generation was stopped
+        if (abortController.signal.aborted) {
+          stoppedByUser = true;
+          break;
+        }
+
         const placeholder = document.createElement("div");
         placeholder.className = "candidate-result";
         placeholder.innerHTML = `<h3 class="candidate-name">${cv.name}</h3><div class="loader" style="margin: 10px 0;"></div> ${getStatusText('generating')}`;
         recommendationsContainer.appendChild(placeholder);
 
         try {
-      const result = await analyzeSingleCvWithAI(cv, rules, currentLang);
-      const resultCard = createCandidateCard(result, currentLang);
-      recommendationsContainer.replaceChild(resultCard, placeholder);
-      
-      allRecommendationsMap[cv.name] = {
-         candidateName: result.candidateName || cv.name,
-         cvName: cv.name,
-         // Taif's update start - store intro text for each CV
-         recommendationIntro: result.recommendationIntro || "",
-         //Ghaith's change start - store both certificates and training courses for PDF/UI
-         recommendations: result.recommendations || [],
-         trainingCourses: result.trainingCourses || []
-         //Ghaith's change end
-      };
+          // Pass abort signal to analyzeSingleCvWithAI
+          const result = await analyzeSingleCvWithAI(
+            cv, 
+            rules, 
+            currentLang, 
+            3, // maxRetries
+            abortController.signal // Pass the abort signal
+          );
+
+          // Check again after async operation
+          if (abortController.signal.aborted) {
+            placeholder.remove();
+            stoppedByUser = true;
+            break;
+          }
+
+          const resultCard = createCandidateCard(result, currentLang);
+          recommendationsContainer.replaceChild(resultCard, placeholder);
+
+          allRecommendationsMap[cv.name] = {
+            candidateName: result.candidateName || cv.name,
+            cvName: cv.name,
+            recommendationIntro: result.recommendationIntro || "",
+            recommendations: result.recommendations || [],
+            trainingCourses: result.trainingCourses || []
+          };
 
           lastRecommendations = { candidates: Object.values(allRecommendationsMap) };
           saveLastRecommendations(lastRecommendations);
         } catch (err) {
+          // Check if error is due to abort
+          if (err.name === 'AbortError') {
+            placeholder.remove();
+            stoppedByUser = true;
+            break;
+          }
           console.error(err);
           placeholder.innerHTML = `<p style="color:red">Error analyzing ${cv.name}</p>`;
         }
         completedCount++;
       }
 
-      setButtonLoading(generateBtn, false);
-      //Ghaith's change start - remove popup/status in business rules after generating recs
-      if (rulesStatus) rulesStatus.innerHTML = "";
-      //Ghaith's change end
-      updateDownloadButtonVisibility(lastRecommendations);
-    });
-  }
+      // Show message if stopped by user
+      if (stoppedByUser) {
+        const stoppedMessage = document.createElement("div");
+        stoppedMessage.className = "status-message status-error";
+        stoppedMessage.style.margin = "20px 0";
+        stoppedMessage.innerHTML = `<i class="fas fa-stop-circle"></i> ${getUiText('generationStopped')}`;
+        recommendationsContainer.insertBefore(stoppedMessage, recommendationsContainer.firstChild);
+      }
 
+    } catch (err) {
+      console.error("Generation error:", err);
+    } finally {
+      // Always clean up when done (completed or stopped)
+      setButtonLoading(generateBtn, false);
+      isGenerating = false;
+      if (stopBtn) stopBtn.classList.add("hidden");
+      abortController = null;
+
+      if (rulesStatus) rulesStatus.innerHTML = "";
+      updateDownloadButtonVisibility(lastRecommendations);
+    }
+  });
+}
+
+// ============================================================
+// 18-12-2025 Starting Taif's updates - Stop Generation Button
+// ============================================================
+
+const stopGenerationBtn = document.getElementById("stop-generation-btn");
+if (stopGenerationBtn) {
+  stopGenerationBtn.addEventListener("click", () => {
+    if (abortController && isGenerating) {
+      // Abort all ongoing requests
+      abortController.abort();
+      
+      // Hide stop button immediately
+      stopGenerationBtn.classList.add("hidden");
+      
+      // Re-enable generate button
+      const generateBtn = document.getElementById("generate-recommendations-btn");
+      if (generateBtn) {
+        generateBtn.disabled = false;
+        generateBtn.innerHTML = getUiText('generateBtn');
+      }
+      
+      // Show "Generation stopped" message
+      const recommendationsContainer = document.getElementById("recommendations-container");
+      if (recommendationsContainer) {
+        const stoppedMessage = document.createElement("div");
+        stoppedMessage.className = "status-message status-error";
+        stoppedMessage.style.margin = "20px 0";
+        stoppedMessage.innerHTML = `<i class="fas fa-stop-circle"></i> ${getUiText('generationStopped')}`;
+        recommendationsContainer.insertBefore(stoppedMessage, recommendationsContainer.firstChild);
+      }
+      
+      isGenerating = false;
+      console.log("✋ Generation stopped by user");
+    }
+  });
+}
+
+// ============================================================
+// 18-12-2025 Ending Taif's updates - Stop Generation Button
+// ============================================================
   // File Upload
   if (cvUploadArea) {
     cvUploadArea.addEventListener("click", () => fileInput && fileInput.click());
@@ -2402,6 +2503,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+
 
 
 

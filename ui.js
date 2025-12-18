@@ -1936,7 +1936,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!hasContent && accumulatedText.trim()) {
               hasContent = true;
               botMessageDiv.style.display = "";
-              
+                //18-12-2025 liyan's updates
+                hideTypingIndicator();
+                //18-12-2025 end liyan's updates
               // Render the first chunk content so we can measure it
               if (typeof marked !== "undefined") {
                 botMessageDiv.innerHTML = marked.parse(accumulatedText);
@@ -2347,6 +2349,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 });
+
 
 
 

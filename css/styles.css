@@ -723,6 +723,7 @@ html[lang="ar"] .results-section > h2 {
   flex-direction: row-reverse;
   justify-content: flex-end;
   text-align: right;
+  margin-inline-start: auto; /* push header to the right edge */
 }
 
 .candidate-result { padding: var(--space-s) 0; }

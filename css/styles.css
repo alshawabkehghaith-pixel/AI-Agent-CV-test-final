@@ -1923,7 +1923,7 @@ html[lang="ar"] .footer-text {
 #generate-recommendations-btn {
   background: white;
   color: white;
-  border: 2px dashed var(--primary);
+  border: 2px solid var(--primary);
   padding: 6px;
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -1961,3 +1961,4 @@ html[lang="ar"] .footer-text {
   background: var(--primary-600);
   transform: translateY(-1px);
  }
+

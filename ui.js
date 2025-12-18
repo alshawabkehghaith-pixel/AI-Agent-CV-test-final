@@ -1141,8 +1141,10 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
         //Ghaith's change end
 
         //Ghaith's change start - match exact UI format with icons and inline rules
-        // Match UI structure exactly: just icon + text, let CSS handle direction (inherits from pdfContainer)
-        const reasonStyle = "margin:8px 0; color:#000000; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal;";
+        // Match UI structure exactly: just icon + text, explicitly set RTL for Arabic PDF
+        const reasonStyle = isArabic 
+          ? "margin:8px 0; color:#000000; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal; direction:rtl; text-align:right;"
+          : "margin:8px 0; color:#000000; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal;";
         // Preprocess reason text for PDF to prevent overlapping when multiple English words appear consecutively
         const pdfReason = prepareReasonForPdf(rec.reason, isArabic);
         card.innerHTML = `
@@ -1302,8 +1304,10 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
         //Ghaith's change end
 
         //Ghaith's change start - match exact UI format with icons and inline rules
-        // Match UI structure exactly: just icon + text, let CSS handle direction (inherits from pdfContainer)
-        const trainingReasonStyle = "margin:8px 0; color:#323836; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal;";
+        // Match UI structure exactly: just icon + text, explicitly set RTL for Arabic PDF
+        const trainingReasonStyle = isArabic 
+          ? "margin:8px 0; color:#323836; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal; direction:rtl; text-align:right;"
+          : "margin:8px 0; color:#323836; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal;";
         // Preprocess reason text for PDF to prevent overlapping when multiple English words appear consecutively
         const trainingPdfReason = prepareReasonForPdf(rec.reason, isArabic);
         card.innerHTML = `

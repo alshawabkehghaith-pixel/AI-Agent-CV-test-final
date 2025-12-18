@@ -113,6 +113,7 @@ I'm here to help you identify the best learning paths for your team. Follow thes
 
     // CV Field Labels
     experience: "Experience",
+    exp: "exp",
     education: "Education",
     certifications: "Certifications",
     skills: "Skills",
@@ -179,6 +180,7 @@ I'm here to help you identify the best learning paths for your team. Follow thes
 
     // CV Field Labels
     experience: "الخبرة المهنية",
+    exp: "خبرة",
     education: "التعليم",
     certifications: "الشهادات",
     skills: "المهارات",
@@ -1732,7 +1734,7 @@ const renderSubmittedCvBubbles = (allResults) => {
     } else {
       const expCount = (cv.experience || []).length;
       const skillCount = (cv.skills || []).length;
-      metaEl.textContent = `${expCount} exp | ${skillCount} skills`;
+      metaEl.textContent = `${expCount} ${getUiText('exp')} | ${skillCount} ${getUiText('skills')}`;
     }
 
     const deleteBtn = document.createElement("button");

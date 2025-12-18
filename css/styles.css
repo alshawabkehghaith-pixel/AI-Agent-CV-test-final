@@ -712,18 +712,20 @@ background: linear-gradient(90deg,var(#074D31), var(#074D31));
 
 /* Recommendations header (star + title) */
 .results-section > h2 {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
   margin: 0 0 var(--space-m) 0;
 }
 
-/* In Arabic, right-align header and move star to the right */
-html[lang="ar"] .results-section > h2 {
-  flex-direction: row-reverse;
-  justify-content: flex-end;
+/* In Arabic, right-align header and show star on the right */
+html[lang="ar"] .results-section {
   text-align: right;
-  margin-inline-start: auto; /* push header to the right edge */
+}
+
+html[lang="ar"] .results-section > h2 {
+  direction: rtl;
+  justify-content: flex-start;
 }
 
 .candidate-result { padding: var(--space-s) 0; }

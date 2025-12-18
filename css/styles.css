@@ -1354,7 +1354,7 @@ html, body {
 
 /* Fix for Maximize Button Color */
 .uploaded-cvs-section h3 .fa-folder-open {
-  color: var(--primary) !important;
+  color: #0e3a28 !important;
  }
 
 button#maximize-uploaded-btn i {
@@ -1961,4 +1961,5 @@ html[lang="ar"] .footer-text {
   background: var(--primary-600);
   transform: translateY(-1px);
  }
+
 

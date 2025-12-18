@@ -872,6 +872,15 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
     return;
   }
 
+  // Helper function to prepare reason text for PDF (prevents overlapping in Arabic with consecutive English words)
+  function prepareReasonForPdf(reason, isArabic) {
+    if (!isArabic) return reason;
+    
+    // Insert zero-width space after English words/numbers to help PDF renderer break lines correctly
+    // This prevents overlapping when multiple English words appear consecutively in Arabic text
+    return reason.replace(/([A-Za-z0-9)(]+)(\s+)/g, '$1\u200B$2');
+  }
+
   // --- PDF GENERATION LOGIC ---
   const catalog = getFinalCertificateCatalog();
   //Ghaith's change start
@@ -1134,10 +1143,12 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
         //Ghaith's change start - match exact UI format with icons and inline rules
         // Match UI structure exactly: just icon + text, let CSS handle direction (inherits from pdfContainer)
         const reasonStyle = "margin:8px 0; color:#000000; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal;";
+        // Preprocess reason text for PDF to prevent overlapping when multiple English words appear consecutively
+        const pdfReason = prepareReasonForPdf(rec.reason, isArabic);
         card.innerHTML = `
           <div class="recommendation-title" style="font-weight:600; font-size:1rem; margin:0 0 8px 0; color:#000000;">${displayName}</div>
           <div class="recommendation-reason" style="${reasonStyle}">
-            <i class="fas fa-lightbulb"></i> ${rec.reason}
+            <i class="fas fa-lightbulb"></i> ${pdfReason}
           </div>
           <div class="recommendation-hours" style="margin-top:4px; font-size:0.9rem; color:#7E9196; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
             <i class="far fa-clock" style="color:#074D31;"></i>
@@ -1293,10 +1304,12 @@ function downloadRecommendationsAsPDF(recommendations, language = 'en') {
         //Ghaith's change start - match exact UI format with icons and inline rules
         // Match UI structure exactly: just icon + text, let CSS handle direction (inherits from pdfContainer)
         const trainingReasonStyle = "margin:8px 0; color:#323836; line-height:1.6; overflow-wrap:anywhere; word-break:break-word; white-space:normal;";
+        // Preprocess reason text for PDF to prevent overlapping when multiple English words appear consecutively
+        const trainingPdfReason = prepareReasonForPdf(rec.reason, isArabic);
         card.innerHTML = `
           <div class="recommendation-title" style="font-weight:600; font-size:1rem; margin:0 0 8px 0; color:#323836;">${displayName}</div>
           <div class="recommendation-reason" style="${trainingReasonStyle}">
-            <i class="fas fa-lightbulb"></i> ${rec.reason}
+            <i class="fas fa-lightbulb"></i> ${trainingPdfReason}
           </div>
           <div class="recommendation-hours" style="margin-top:4px; font-size:0.9rem; color:#7E9196; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
             <i class="far fa-clock" style="color:#074D31;"></i>

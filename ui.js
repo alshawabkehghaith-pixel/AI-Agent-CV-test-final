@@ -1879,11 +1879,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   const addRuleBtn = document.getElementById("add-rule-btn");
   const generateBtn = document.getElementById("generate-recommendations-btn");
 
+  /*21-12-2025 liyan's updates
   const defaultRulesForLang = getDefaultRules(currentLang);
   initializeRulesUI(defaultRulesForLang);
   userRules = [...defaultRulesForLang];
   saveUserRules(userRules);
-
+    21-12-2025 end liyan's updates*/ 
   
   // 12-15-2025 Joud start
   // Setup Persistence Toggle

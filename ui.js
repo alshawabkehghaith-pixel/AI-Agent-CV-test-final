@@ -307,15 +307,23 @@ function updateLanguage(lang) {
     });
   }
 
-  // Iterate through current rules: if it's a default, translate it; otherwise keep it
-  const updatedRules = currentRulesFromUI.map(rule => {
-    return defaultMap.has(rule) ? defaultMap.get(rule) : rule;
-  });
+// 21-12-2025 joud start
+  // Wrap this in a guard to prevent storage being wiped during initialization or translation
+  if (currentRulesFromUI.length > 0 || (userRules && userRules.length > 0)) {
+// 21-12-2025 joud end
 
-  // Save and Re-render
-  userRules = updatedRules;
-  initializeRulesUI(userRules);
-  saveUserRules(userRules);
+    // Iterate through current rules: if it's a default, translate it; otherwise keep it
+    const updatedRules = currentRulesFromUI.map(rule => {
+      return defaultMap.has(rule) ? defaultMap.get(rule) : rule;
+    });
+
+    // Save and Re-render
+    userRules = updatedRules;
+    initializeRulesUI(userRules);
+    saveUserRules(userRules);
+// 21-12-2025 joud start
+  }
+// 21-12-2025 joud end
 
   if (submittedCvData.length > 0) {
     renderSubmittedCvBubbles(submittedCvData);
@@ -418,33 +426,33 @@ function createRuleInput(ruleText = "") {
   input.placeholder = getUiText('enterRule');
   input.value = ruleText;
   input.className = "rule-input";
-  // 21-12-2025 joud start
+
+// 21-12-2025 joud start
+  // Automatically save rules to local storage as user types
   input.addEventListener("input", () => {
     const updatedRules = getRulesFromUI();
     saveUserRules(updatedRules);
   });
-  // 21-12-2025 joud end
+// 21-12-2025 joud end
+
   const deleteBtn = document.createElement("button");
   deleteBtn.type = "button";
   deleteBtn.className = "delete-rule-btn";
   deleteBtn.innerHTML = "×";
   deleteBtn.title = "Delete this rule";
-  // 21-12-2025 joud start
+
   deleteBtn.addEventListener("click", (e) => {
     e.preventDefault();
     wrapper.remove();
+// 21-12-2025 joud start
+    // Save rules after a rule is removed
     saveUserRules(getRulesFromUI());
-  });
-  // 21-12-2025 joud end
-  deleteBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    wrapper.remove();
+// 21-12-2025 joud end
   });
 
   wrapper.appendChild(input);
   wrapper.appendChild(deleteBtn);
   return wrapper;
-  
 }
 
 function initializeRulesUI(rules) {
@@ -1818,6 +1826,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   // 1. Declare variables first
   let chatHistory = []; 
   
+// 21-12-2025 joud start
+  // FIX: Rules MUST be loaded and rendered before Language/Welcome initialization.
+  // This prevents the translation loop from seeing an empty list and wiping storage.
+  userRules = loadUserRules(); 
+  initializeRulesUI(userRules);
+// 21-12-2025 joud end
+
   // 2. Initialize Language FIRST (prevents re-triggering loader on existing data)
   initializeLanguage();
   // --- FIX START joud 16-12-2025: Move clearChatHistoryDom() HERE ---
@@ -1890,11 +1905,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const addRuleBtn = document.getElementById("add-rule-btn");
   const generateBtn = document.getElementById("generate-recommendations-btn");
-
-  // 21-12-2025 joud start
-  userRules = loadUserRules(); // This helper already defaults if storage is empty
-  initializeRulesUI(userRules);
-  // 21-12-2025 joud end
 
   
   // 12-15-2025 Joud start
@@ -2422,9 +2432,10 @@ if (stopGenerationBtn) {
           container.appendChild(newInput);
           const input = newInput.querySelector('input'); 
           if (input) input.focus();
-          // 21-12-2025 joud start
+// 21-12-2025 joud start
+          // Trigger a save immediately when a new empty input is added
           saveUserRules(getRulesFromUI());
-          // 21-12-2025 joud end
+// 21-12-2025 joud end
         }
         //Ghaith's change end
         
@@ -2533,9 +2544,3 @@ if (stopGenerationBtn) {
     });
   }
 });
-
-
-
-
-
-

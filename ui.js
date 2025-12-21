@@ -1879,10 +1879,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   const addRuleBtn = document.getElementById("add-rule-btn");
   const generateBtn = document.getElementById("generate-recommendations-btn");
 
-  const defaultRulesForLang = getDefaultRules(currentLang);
-  initializeRulesUI(defaultRulesForLang);
-  userRules = [...defaultRulesForLang];
-  saveUserRules(userRules);
+  // --- 21-12-2025 joud start ---
+  import { loadUserRules } from "./storage-catalog.js";
+  
+  // Load from localStorage first
+  const persistedRules = loadUserRules();
+  
+  // If we have rules from a previous session, use them. 
+  // Otherwise, fall back to language defaults.
+  if (persistedRules && persistedRules.length > 0) {
+    userRules = persistedRules;
+  } else {
+    userRules = [...getDefaultRules(currentLang)];
+  }
+  // --- 21-12-2025 joud end ---
+// Render the UI and ensure the correct state is saved
+initializeRulesUI(userRules);
+saveUserRules(userRules);
 
   
   // 12-15-2025 Joud start
@@ -2517,6 +2530,7 @@ if (stopGenerationBtn) {
     });
   }
 });
+
 
 
 

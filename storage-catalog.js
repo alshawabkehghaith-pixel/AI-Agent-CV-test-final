@@ -87,9 +87,12 @@ export function loadUserRules() {
   if (!saved) return [...DEFAULT_RULES];
   try {
     const parsed = JSON.parse(saved);
-    if (Array.isArray(parsed) && parsed.length > 0) {
+    // 21-12-2025 joud start
+    // We remove the .length > 0 requirement to allow users to save an empty list of rules
+    if (Array.isArray(parsed)) {
       return parsed;
     }
+    // 21-12-2025 joud end
   } catch (err) {
     console.error("Failed to parse user rules:", err);
   }
@@ -228,7 +231,7 @@ export function getTrainingCoursesCatalogAsPromptString() {
   return catalog
     .map(
       (c) =>
-        `- **${c.name || c["Training Course Title"] || "Unknown Course"}** (${c.level || c["Training Level"] || "N/A"}): ${c.overview || c["Overview"] || ""}$${
+        `- **${c.name || c["Training Course Title"] || "Unknown Course"}** (${c.level || c["Training Level"] || "N/A"}): ${c.overview || c["Overview"] || ""}${
           c.fieldEn || c["Training Field"]
             ? ` | Field: ${c.fieldEn || c["Training Field"]}`
             : ""
@@ -356,6 +359,3 @@ export function calculateTotalExperience(experienceArray) {
   });
   return Math.round(totalYears * 10) / 10;
 }
-
-
-

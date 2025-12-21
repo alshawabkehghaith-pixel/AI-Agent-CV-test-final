@@ -73,28 +73,59 @@ export function loadChatHistory() {
   }
 }
 
+// export function saveUserRules(userRules) {
+//   if (!isPersistenceEnabled()) return;
+//   try {
+//     localStorage.setItem(USER_RULES_KEY, JSON.stringify(userRules));
+//   } catch (err) {
+//     console.error("Failed to save user rules:", err);
+//   }
+// }
+
+// export function loadUserRules() {
+//   const saved = localStorage.getItem(USER_RULES_KEY);
+//   if (!saved) return [...DEFAULT_RULES];
+//   try {
+//     const parsed = JSON.parse(saved);
+//     if (Array.isArray(parsed) && parsed.length > 0) {
+//       return parsed;
+//     }
+//   } catch (err) {
+//     console.error("Failed to parse user rules:", err);
+//   }
+//   return [...DEFAULT_RULES];
+// }
+
+//21-12-2025 liyan's updates
 export function saveUserRules(userRules) {
-  if (!isPersistenceEnabled()) return;
+  // DEBUG: Add a log here to see if this is even being reached
+  if (!isPersistenceEnabled()) {
+    console.warn("Persistence is disabled. Rules will not save.");
+    return;
+  }
+  
   try {
     localStorage.setItem(USER_RULES_KEY, JSON.stringify(userRules));
   } catch (err) {
     console.error("Failed to save user rules:", err);
   }
 }
-
 export function loadUserRules() {
   const saved = localStorage.getItem(USER_RULES_KEY);
   if (!saved) return [...DEFAULT_RULES];
+
   try {
     const parsed = JSON.parse(saved);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
+    // CHANGE: Allow empty arrays [] if the user wants no rules active
+    if (Array.isArray(parsed)) {
+      return parsed.length > 0 ? parsed : []; 
     }
   } catch (err) {
     console.error("Failed to parse user rules:", err);
   }
   return [...DEFAULT_RULES];
 }
+//21-12-2025  end liyan's updates
 
 export function saveLastRecommendations(lastRecommendations) {
   if (!isPersistenceEnabled()) return;
@@ -354,5 +385,6 @@ export function calculateTotalExperience(experienceArray) {
   });
   return Math.round(totalYears * 10) / 10;
 }
+
 
 

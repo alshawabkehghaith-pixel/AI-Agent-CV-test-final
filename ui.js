@@ -418,13 +418,24 @@ function createRuleInput(ruleText = "") {
   input.placeholder = getUiText('enterRule');
   input.value = ruleText;
   input.className = "rule-input";
-
+  // 21-12-2025 joud start
+  input.addEventListener("input", () => {
+    const updatedRules = getRulesFromUI();
+    saveUserRules(updatedRules);
+  });
+  // 21-12-2025 joud end
   const deleteBtn = document.createElement("button");
   deleteBtn.type = "button";
   deleteBtn.className = "delete-rule-btn";
   deleteBtn.innerHTML = "×";
   deleteBtn.title = "Delete this rule";
-
+  // 21-12-2025 joud start
+  deleteBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    wrapper.remove();
+    saveUserRules(getRulesFromUI());
+  });
+  // 21-12-2025 joud end
   deleteBtn.addEventListener("click", (e) => {
     e.preventDefault();
     wrapper.remove();
@@ -433,6 +444,7 @@ function createRuleInput(ruleText = "") {
   wrapper.appendChild(input);
   wrapper.appendChild(deleteBtn);
   return wrapper;
+  
 }
 
 function initializeRulesUI(rules) {
@@ -1879,10 +1891,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const addRuleBtn = document.getElementById("add-rule-btn");
   const generateBtn = document.getElementById("generate-recommendations-btn");
 
-  const defaultRulesForLang = getDefaultRules(currentLang);
-  initializeRulesUI(defaultRulesForLang);
-  userRules = [...defaultRulesForLang];
-  saveUserRules(userRules);
+  // 21-12-2025 joud start
+  userRules = loadUserRules(); // This helper already defaults if storage is empty
+  initializeRulesUI(userRules);
+  // 21-12-2025 joud end
 
   
   // 12-15-2025 Joud start
@@ -2408,10 +2420,14 @@ if (stopGenerationBtn) {
         if (!hasEmptyInput) {
           const newInput = createRuleInput();
           container.appendChild(newInput);
-          const input = newInput.querySelector('input');
+          const input = newInput.querySelector('input'); 
           if (input) input.focus();
+          // 21-12-2025 joud start
+          saveUserRules(getRulesFromUI());
+          // 21-12-2025 joud end
         }
         //Ghaith's change end
+        
       }
     });
   }
@@ -2517,6 +2533,7 @@ if (stopGenerationBtn) {
     });
   }
 });
+
 
 
 

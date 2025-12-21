@@ -289,13 +289,8 @@ function updateLanguage(lang) {
 
   const recommendationsContainer = document.getElementById("recommendations-container");
   const resultsSection = document.getElementById("results-section");
-  const selectedCvs = submittedCvData.filter(cv => cv.selected);
-  const generateBtn = document.getElementById("generate-recommendations-btn");
-  
-  if (selectedCvs.length > 0 && generateBtn && !generateBtn.disabled) {
-    // Note: Automatic re-generation on language toggle can be expensive/interruptive. 
-    // Usually preferred to let user click again, but kept as per existing logic.
-  } else if (
+
+  if (
     recommendationsContainer &&
     lastRecommendations &&
     lastRecommendations.candidates &&
@@ -355,7 +350,6 @@ function createRuleInput(ruleText = "") {
   deleteBtn.innerHTML = "×";
   deleteBtn.title = "Delete this rule";
 
-  // --- FIX: Use 'input' event to save on every keystroke so nothing is lost on refresh ---
   input.addEventListener("input", () => {
     const updatedRules = getRulesFromUI();
     saveUserRules(updatedRules);
@@ -412,123 +406,9 @@ function updateGenerateButton(uploadedCvs) {
   const fileInput = document.getElementById("file-input");
   if (generateBtn) {
     const hasFiles = fileInput && fileInput.files && fileInput.files.length > 0;
-    const hasCvs = uploadedCvs.length > 0;
+    const hasCvs = (uploadedCvs && uploadedCvs.length > 0);
     generateBtn.disabled = !hasFiles && !hasCvs;
   }
-}
-
-// ---------------------------------------------------------------------------
-// Candidate Card Creation (With Timeline)
-// ---------------------------------------------------------------------------
-function createCandidateCard(candidateData, language = 'en') {
-  const catalog = getFinalCertificateCatalog();
-  const trainingCatalog = getFinalTrainingCoursesCatalog();
-  const candidateDiv = document.createElement("div");
-  candidateDiv.className = "candidate-result";
-  candidateDiv.style.opacity = "0"; 
-  candidateDiv.style.animation = "slideIn 0.5s forwards"; 
-
-  let displayCandidateName = candidateData.candidateName;
-  if (!displayCandidateName || displayCandidateName === "N/A" || displayCandidateName === "n/a") {
-      displayCandidateName = candidateData.cvName || (language === 'ar' ? "مرشح" : "Candidate");
-  }
-
-  const nameDiv = document.createElement("h3");
-  nameDiv.className = "candidate-name";
-  nameDiv.textContent = displayCandidateName;
-  candidateDiv.appendChild(nameDiv);
-
-  if (candidateData.cvName && candidateData.cvName !== displayCandidateName) {
-    const fileDiv = document.createElement("div");
-    fileDiv.className = "candidate-cv-name";
-    fileDiv.textContent = `File: ${candidateData.cvName}`;
-    candidateDiv.appendChild(fileDiv);
-  }
-
-  const introDiv = document.createElement("div");
-  introDiv.className = "recommendation-intro";
-  let introText = candidateData.recommendationIntro || candidateData.recommendationSummary || "";
-  if (!introText) {
-    introText = language === "ar" ? "بناءً على خبرات المرشح الحالية، تم ترشيح التوصيات التالية:" : "Based on the candidate's background, the following are recommended:";
-  }
-  introDiv.textContent = introText;
-  candidateDiv.appendChild(introDiv);
-
-  // Certificates Section
-  const certificatesSubsection = document.createElement("div");
-  certificatesSubsection.className = "recommendations-subsection";
-  const certTitle = document.createElement("h4");
-  certTitle.className = "subsection-title";
-  certTitle.textContent = language === "ar" ? "الشهادات" : "Certificates";
-  certificatesSubsection.appendChild(certTitle);
-
-  const certTimeline = [];
-  let certTotalHours = 0;
-
-  if (candidateData.recommendations && candidateData.recommendations.length > 0) {
-    candidateData.recommendations.forEach((rec) => {
-      let displayName = rec.certName;
-      let catalogEntry = catalog.find(c => c.id === rec.certId) || catalog.find(c => c.name === rec.certName || c.Certificate_Name_EN === rec.certName);
-      if (language === 'ar' && catalogEntry && catalogEntry.nameAr) displayName = catalogEntry.nameAr;
-      let hours = Number(catalogEntry?.Estimated_Hours_To_Complete || catalogEntry?.estimatedHours) || 0;
-      certTimeline.push({ name: displayName, hours });
-      certTotalHours += hours;
-
-      const hourWord = getUiText('hours');
-      const hoursText = hours > 0 ? `${hours} ${hourWord}` : getUiText('na');
-      const card = document.createElement("div");
-      card.className = "recommendation-card";
-      card.innerHTML = `
-        <div class="recommendation-title">${displayName}</div>
-        <div class="recommendation-reason"><i class="fas fa-lightbulb"></i> ${rec.reason}</div>
-        <div class="recommendation-hours">
-          <i class="far fa-clock"></i> <span>${getUiText('estTime')}</span> <strong>${hoursText}</strong>
-          ${rec.rulesApplied && rec.rulesApplied.length > 0 ? `<span class="recommendation-rule-inline"><i class="fas fa-gavel"></i> ${getUiText('rulesApplied')} ${rec.rulesApplied.join(", ")}</span>` : ""}
-        </div>`;
-      certificatesSubsection.appendChild(card);
-    });
-  } else {
-    const msg = document.createElement("p");
-    msg.textContent = language === 'ar' ? "لم يتم العثور على توصيات للشهادات." : "No certificate recommendations found.";
-    certificatesSubsection.appendChild(msg);
-  }
-  
-  if (certTimeline.length > 0 && certTotalHours > 0) {
-    const timelineWrapper = document.createElement("div");
-    timelineWrapper.className = "timeline-wrapper";
-    const titleText = language === "ar" ? "الوقت التقريبي لإكمال الشهادات المقترحة" : "Estimated timeline for certificates";
-    const isArabic = language === "ar";
-    timelineWrapper.innerHTML = `<h4 class="timeline-title">${titleText} (${getUiText('total')}: ${certTotalHours} ${getUiText('hours')})</h4>`;
-    certificatesSubsection.appendChild(timelineWrapper);
-  }
-  candidateDiv.appendChild(certificatesSubsection);
-
-  // Training Section
-  const trainingSubsection = document.createElement("div");
-  trainingSubsection.className = "recommendations-subsection";
-  const trainingTitle = document.createElement("h4");
-  trainingTitle.className = "subsection-title";
-  trainingTitle.textContent = language === "ar" ? "الدورات التدريبية" : "Training Courses";
-  trainingSubsection.appendChild(trainingTitle);
-
-  if (candidateData.trainingCourses && candidateData.trainingCourses.length > 0) {
-    candidateData.trainingCourses.forEach((rec) => {
-      let displayName = rec.courseName;
-      let catalogEntry = trainingCatalog.find(c => c.id === rec.courseId) || trainingCatalog.find(c => c.name === rec.courseName);
-      if (language === 'ar' && catalogEntry && catalogEntry.nameAr) displayName = catalogEntry.nameAr;
-      const card = document.createElement("div");
-      card.className = "recommendation-card";
-      card.innerHTML = `<div class="recommendation-title">${displayName}</div><div class="recommendation-reason">${rec.reason}</div>`;
-      trainingSubsection.appendChild(card);
-    });
-  } else {
-    const msg = document.createElement("p");
-    msg.textContent = language === 'ar' ? "لا توجد توصيات للدورات التدريبية." : "No training course recommendations found.";
-    trainingSubsection.appendChild(msg);
-  }
-  candidateDiv.appendChild(trainingSubsection);
-
-  return candidateDiv;
 }
 
 // ---------------------------------------------------------------------------
@@ -571,44 +451,262 @@ function updateDownloadButtonVisibility(recommendations) {
 }
 
 // ---------------------------------------------------------------------------
+// Modal helpers (CV review)
+// ---------------------------------------------------------------------------
+
+// Make helper functions globally accessible so they can be used by renderCvDetails
+function createItemRow(item, fields) {
+  const row = document.createElement("div");
+  row.className = "item-row";
+  const deleteBtn = document.createElement("span");
+  deleteBtn.className = "delete-item-btn";
+  deleteBtn.textContent = "×";
+  deleteBtn.addEventListener("click", () => row.remove());
+  row.appendChild(deleteBtn);
+
+  fields.forEach((f) => {
+    const field = typeof f === "string" ? { name: f } : f;
+    const isTextarea = field.type === "textarea" || field.multiline;
+    const input = document.createElement(isTextarea ? "textarea" : "input");
+    if (!isTextarea) input.type = "text";
+    
+    input.placeholder = field.placeholder || field.name;
+    input.value = item[field.name] || "";
+    input.dataset.field = field.name || "";
+    if (field.className) input.classList.add(field.className);
+    row.appendChild(input);
+  });
+  return row;
+}
+
+function createSkillBubble(item, fields) {
+  const bubble = document.createElement("div");
+  bubble.className = "skill-bubble";
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = "skill-input";
+  const primaryField = typeof fields[0] === "string" ? fields[0] : fields[0].name;
+  const skillValue = item[primaryField] || item.title || item.name || "";
+  input.value = skillValue;
+  input.dataset.field = primaryField;
+  const minWidth = 10;
+  input.style.width = `${Math.max(minWidth, skillValue.length + 1)}ch`;
+  input.addEventListener("input", (e) => {
+    input.style.width = `${Math.max(minWidth, e.target.value.length + 1)}ch`;
+  });
+  bubble.appendChild(input);
+  const deleteBtn = document.createElement("span");
+  deleteBtn.className = "delete-item-btn";
+  deleteBtn.textContent = "×";
+  deleteBtn.addEventListener("click", (e) => { bubble.remove(); });
+  bubble.appendChild(deleteBtn);
+  return bubble;
+}
+
+function renderCvDetails(cv) {
+  const container = document.getElementById("cvResultsContainer");
+  if (!container) return;
+  container.innerHTML = "";
+
+  if (cv.isParsing) { 
+    container.innerHTML = `<div class="status-message"><div class="loader"></div> ${getStatusText('analyzing')}</div>`;
+    return;
+  }
+  
+  const sections = [
+    {
+      key: "experience",
+      label: "Experience",
+      fields: [
+        { name: "jobTitle", placeholder: "Job Title", className: "cv-field-job-title" },
+        { name: "company", placeholder: "Company", className: "cv-field-company" },
+        { name: "description", placeholder: "Description", multiline: true, className: "cv-description-textarea" },
+        { name: "years", placeholder: "Years/Period" },
+      ],
+    },
+    {
+      key: "education",
+      label: "Education",
+      fields: [
+        { name: "degreeField", placeholder: "Degree", className: "education-degree-input" },
+        { name: "school", placeholder: "School" },
+      ],
+    },
+    { key: "certifications", label: "Certifications", fields: [{ name: "title", placeholder: "Certification" }] },
+    { key: "skills", label: "Skills", fields: [{ name: "title", placeholder: "Skill" }] },
+  ];
+
+  sections.forEach((sec) => {
+    const secDiv = document.createElement("div");
+    secDiv.className = `cv-section cv-section-${sec.key}`;
+    secDiv.innerHTML = `<h3>${sec.label}</h3>`;
+    let listDiv = document.createElement("div");
+    listDiv.id = `${cv.name}_${sec.key}_list`;
+    
+    if (sec.key === "skills") {
+      listDiv.className = "skills-bubble-list";
+      (cv[sec.key] || []).forEach((item) => listDiv.appendChild(createSkillBubble(item, sec.fields)));
+    } else {
+      (cv[sec.key] || []).forEach((item) => listDiv.appendChild(createItemRow(item, sec.fields)));
+    }
+    
+    const addBtn = document.createElement("button");
+    addBtn.className = "add-btn";
+    addBtn.textContent = `+ Add ${sec.label}`;
+    addBtn.onclick = () => {
+        const item = {};
+        if (sec.key === "skills") listDiv.appendChild(createSkillBubble(item, sec.fields));
+        else listDiv.appendChild(createItemRow(item, sec.fields));
+    };
+
+    secDiv.appendChild(listDiv);
+    secDiv.appendChild(addBtn);
+    container.appendChild(secDiv);
+  });
+}
+
+function readCvFromDom(cv) {
+  const updated = { ...cv };
+  ["experience", "education", "certifications", "skills"].forEach((sec) => {
+    const list = document.getElementById(`${cv.name}_${sec}_list`);
+    if (!list) return;
+    updated[sec] = [];
+    if (sec === "skills") {
+      list.querySelectorAll(".skill-bubble").forEach(b => {
+        const inp = b.querySelector("input");
+        if (inp) updated[sec].push({ title: inp.value });
+      });
+    } else {
+      list.querySelectorAll(".item-row").forEach(row => {
+        const entry = {};
+        row.querySelectorAll("input, textarea").forEach(inp => {
+          entry[inp.dataset.field] = inp.value;
+        });
+        updated[sec].push(entry);
+      });
+    }
+  });
+  return updated;
+}
+
+function openCvModal(allCvResults, initialIndex = 0) {
+  const modal = document.getElementById("cvModal");
+  const tabs = document.getElementById("cvTabsContainer");
+  if (!modal || !tabs) return;
+
+  submittedCvData = allCvResults;
+  modal.style.display = "flex";
+  tabs.innerHTML = "";
+
+  submittedCvData.forEach((cv, idx) => {
+    const tab = document.createElement("div");
+    tab.className = "cv-tab" + (idx === initialIndex ? " active" : "");
+    tab.textContent = cv.name;
+    tab.onclick = () => {
+      document.querySelectorAll(".cv-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      renderCvDetails(submittedCvData[idx]);
+    };
+    tabs.appendChild(tab);
+  });
+
+  renderCvDetails(submittedCvData[initialIndex]);
+}
+
+function upsertByName(existing, incoming) {
+  const map = new Map();
+  existing.forEach((cv) => map.set(cv.name, cv));
+  incoming.forEach((cv) => map.set(cv.name, cv));
+  return Array.from(map.values());
+}
+
+function upsertAndRenderSubmittedCvs(cvResults) {
+  submittedCvData = upsertByName(submittedCvData, cvResults);
+  renderSubmittedCvBubbles(submittedCvData);
+}
+
+function renderSubmittedCvBubbles(allResults) {
+  const container = document.getElementById("submitted-cv-bubbles");
+  const countEl = document.getElementById("uploaded-cv-count");
+  if (countEl) countEl.textContent = allResults.length;
+  if (!container) return;
+  container.innerHTML = "";
+
+  allResults.forEach((cv, idx) => {
+    const bubble = document.createElement("div");
+    bubble.className = "cv-summary-bubble";
+    
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.className = "cv-select-checkbox";
+    checkbox.checked = cv.selected !== false;
+    checkbox.onclick = (e) => e.stopPropagation();
+    checkbox.onchange = (e) => { cv.selected = e.target.checked; updateGenerateButton(submittedCvData); };
+    
+    const nameSpan = document.createElement("span");
+    nameSpan.className = "bubble-name";
+    nameSpan.textContent = cv.name;
+
+    const metaSpan = document.createElement("span");
+    metaSpan.className = "bubble-meta";
+    if (cv.isParsing) {
+      metaSpan.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Parsing...`;
+    } else {
+      metaSpan.textContent = `${(cv.experience || []).length} exp | ${(cv.skills || []).length} skills`;
+    }
+
+    const delBtn = document.createElement("button");
+    delBtn.className = "delete-bubble-btn";
+    delBtn.innerHTML = "×";
+    delBtn.onclick = (e) => {
+      e.stopPropagation();
+      submittedCvData.splice(idx, 1);
+      renderSubmittedCvBubbles(submittedCvData);
+      saveSubmittedCvs(submittedCvData);
+      updateGenerateButton(submittedCvData);
+    };
+
+    bubble.appendChild(checkbox);
+    bubble.appendChild(nameSpan);
+    bubble.appendChild(metaSpan);
+    bubble.appendChild(delBtn);
+    bubble.onclick = () => openCvModal(submittedCvData, idx);
+    container.appendChild(bubble);
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Main bootstrap
 // ---------------------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", async () => {
   let chatHistory = []; 
   
-  // --- FIX: LOAD RULES BEFORE DOING ANYTHING ELSE ---
   const persistedRules = loadUserRules();
   const savedLang = loadLanguagePreference();
 
-  // If we have saved rules, use them. Otherwise, initialize with defaults.
   if (persistedRules && persistedRules.length > 0) {
       userRules = persistedRules;
   } else {
       userRules = [...getDefaultRules(savedLang)];
   }
   
-  // Render rules to UI immediately
   initializeRulesUI(userRules);
-
-  // Now handle language and welcome messages
   initializeLanguage();
   clearChatHistoryDom(); 
   
   await loadCertificateCatalog();
   await loadTrainingCoursesCatalog();
 
-  // Restore session data
   if (isPersistenceEnabled()) {
     chatHistory = loadChatHistory();
     lastRecommendations = loadLastRecommendations() || { candidates: [] };
-    const chatContainer = document.getElementById("chat-messages");
-    if (chatContainer && chatHistory.length > 0) {
+    if (chatHistory.length > 0) {
       chatHistory.forEach(msg => addMessage(msg.text, msg.isUser));
     }
     if (lastRecommendations?.candidates?.length > 0) {
-      const recommendationsContainer = document.getElementById("recommendations-container");
-      const resultsSection = document.getElementById("results-section");
-      displayRecommendations(lastRecommendations, recommendationsContainer, resultsSection, currentLang);
+      const recContainer = document.getElementById("recommendations-container");
+      const resSection = document.getElementById("results-section");
+      displayRecommendations(lastRecommendations, recContainer, resSection, currentLang);
       updateDownloadButtonVisibility(lastRecommendations);
     }
   }
@@ -620,78 +718,95 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateGenerateButton(submittedCvData);
   }
   
-  const userInput = document.getElementById("user-input");
-  const sendButton = document.getElementById("send-button");
   const fileInput = document.getElementById("file-input");
   const cvUploadArea = document.getElementById("cv-upload-area");
   const uploadStatus = document.getElementById("upload-status");
-  const resultsSection = document.getElementById("results-section");
-  const recommendationsContainer = document.getElementById("recommendations-container");
-  const addRuleBtn = document.getElementById("add-rule-btn");
   const generateBtn = document.getElementById("generate-recommendations-btn");
 
-  const persistenceToggle = document.getElementById("persistence-toggle");
-  if (persistenceToggle) {
-    persistenceToggle.checked = isPersistenceEnabled();
-    persistenceToggle.addEventListener("change", (e) => {
-      const isEnabled = e.target.checked;
-      setPersistence(isEnabled);
-      if (isEnabled) {
-        saveUserRules(getRulesFromUI());
-        saveChatHistory(chatHistory);
-        saveLastRecommendations(lastRecommendations);
-        saveSubmittedCvs(submittedCvData);
-      }
-    });
+  // File Processing
+  async function runFastFileProcessing() {
+    if (!fileInput.files.length) return;
+    const files = Array.from(fileInput.files);
+    showLoading(uploadStatus, "extracting");
+
+    try {
+      const extracted = await Promise.all(files.map(async (file) => {
+        const rawText = await extractTextFromFile(file);
+        return { 
+          name: file.name, 
+          text: rawText, 
+          isParsing: true, 
+          selected: true,
+          experience: [],
+          education: [],
+          certifications: [],
+          skills: []
+        };
+      }));
+
+      upsertAndRenderSubmittedCvs(extracted);
+      saveSubmittedCvs(submittedCvData);
+      updateStatus(uploadStatus, "success");
+      updateGenerateButton(submittedCvData);
+
+      // Start background parsing
+      extracted.forEach(async (cvRef) => {
+        try {
+          const structured = await parseCvIntoStructuredSections(cvRef.text);
+          if (structured) {
+            // MAP DATA TO TOP LEVEL SO UI CAN SEE IT
+            cvRef.experience = structured.experience || [];
+            cvRef.education = structured.education || [];
+            cvRef.certifications = structured.certifications || [];
+            // Normalize skills to objects for the modal
+            cvRef.skills = (structured.skills || []).map(s => typeof s === 'string' ? { title: s } : s);
+            cvRef.structured = structured;
+          }
+        } catch (err) {
+          console.error(`Failed to parse CV ${cvRef.name}:`, err);
+        } finally {
+          cvRef.isParsing = false;
+          renderSubmittedCvBubbles(submittedCvData);
+          saveSubmittedCvs(submittedCvData);
+        }
+      });
+    } catch (err) {
+      console.error("Fast processing error:", err);
+      updateStatus(uploadStatus, "error", true);
+    }
   }
 
-  if (addRuleBtn) {
-    addRuleBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      const container = document.getElementById("rules-container");
-      if (container) {
-        const newInput = createRuleInput();
-        container.appendChild(newInput);
-        newInput.querySelector('input')?.focus();
-        // Since we are creating a new input, let's ensure storage reflects the new state
-        saveUserRules(getRulesFromUI());
-      }
-    });
-  }
+  if (fileInput) fileInput.addEventListener("change", runFastFileProcessing);
+  if (cvUploadArea) cvUploadArea.addEventListener("click", () => fileInput.click());
 
-  // Generate Recommendations
+  // Generate Logic
   if (generateBtn) {
-    generateBtn.addEventListener("click", async () => {
-      const stopBtn = document.getElementById("stop-generation-btn");
-      if (stopBtn) stopBtn.classList.remove("hidden");
+    generateBtn.onclick = async () => {
       abortController = new AbortController();
       isGenerating = true;
       generateBtn.disabled = true;
       generateBtn.innerHTML = '<div class="loader"></div>';
-      recommendationsContainer.innerHTML = "";
-      resultsSection.classList.remove("hidden");
+      
+      const recContainer = document.getElementById("recommendations-container");
+      const resSection = document.getElementById("results-section");
+      recContainer.innerHTML = "";
+      resSection.classList.remove("hidden");
+      
       const rules = getRulesFromUI();
       const cvArray = submittedCvData.filter(cv => cv.selected);
-      if (cvArray.length === 0) {
-        generateBtn.disabled = false;
-        generateBtn.innerHTML = getUiText('generateBtn');
-        if (stopBtn) stopBtn.classList.add("hidden");
-        isGenerating = false;
-        alert("Please select at least one CV");
-        return;
-      }
+      
       try {
         allRecommendationsMap = {};
         for (const cv of cvArray) {
-          if (abortController.signal.aborted) break;
           const placeholder = document.createElement("div");
           placeholder.className = "candidate-result";
-          placeholder.innerHTML = `<h3 class="candidate-name">${cv.name}</h3><div class="loader"></div>`;
-          recommendationsContainer.appendChild(placeholder);
+          placeholder.innerHTML = `<h3>${cv.name}</h3><div class="loader"></div>`;
+          recContainer.appendChild(placeholder);
+          
           const result = await analyzeSingleCvWithAI(cv, rules, currentLang, 3, abortController.signal);
-          if (abortController.signal.aborted) { placeholder.remove(); break; }
           const resultCard = createCandidateCard(result, currentLang);
-          recommendationsContainer.replaceChild(resultCard, placeholder);
+          recContainer.replaceChild(resultCard, placeholder);
+          
           allRecommendationsMap[cv.name] = result;
           lastRecommendations = { candidates: Object.values(allRecommendationsMap) };
           saveLastRecommendations(lastRecommendations);
@@ -700,43 +815,31 @@ document.addEventListener("DOMContentLoaded", async () => {
         generateBtn.disabled = false;
         generateBtn.innerHTML = getUiText('generateBtn');
         isGenerating = false;
-        if (stopBtn) stopBtn.classList.add("hidden");
         updateDownloadButtonVisibility(lastRecommendations);
       }
-    });
+    };
   }
 
-  // Close Modals
-  document.getElementById("closeCvModalBtn")?.addEventListener("click", () => {
+  // Modals
+  document.getElementById("submitCvReview")?.addEventListener("click", () => {
+    const activeTab = document.querySelector(".cv-tab.active");
+    if (activeTab) {
+        const name = activeTab.textContent;
+        const cv = submittedCvData.find(c => c.name === name);
+        if (cv) {
+            const updated = readCvFromDom(cv);
+            Object.assign(cv, updated);
+            renderSubmittedCvBubbles(submittedCvData);
+            saveSubmittedCvs(submittedCvData);
+        }
+    }
     document.getElementById("cvModal").style.display = "none";
   });
-  document.getElementById("closeRulesModal")?.addEventListener("click", () => {
-    document.getElementById("rulesModal").style.display = "none";
-  });
   
-  // File Processing
-  if (fileInput) fileInput.addEventListener("change", runFastFileProcessing);
-  if (cvUploadArea) cvUploadArea.addEventListener("click", () => fileInput.click());
-
-  async function runFastFileProcessing() {
-    if (!fileInput.files.length) return;
-    showLoading(uploadStatus, "extracting");
-    const extracted = await Promise.all(Array.from(fileInput.files).map(async (file) => {
-      const rawText = await extractTextFromFile(file);
-      return { name: file.name, text: rawText, isParsing: true, selected: true };
-    }));
-    upsertAndRenderSubmittedCvs(extracted);
-    saveSubmittedCvs(submittedCvData);
-    updateStatus(uploadStatus, "success");
-    extracted.forEach(async (cv) => {
-        const structured = await parseCvIntoStructuredSections(cv.text);
-        cv.structured = structured;
-        cv.isParsing = false;
-        renderSubmittedCvBubbles(submittedCvData);
-        saveSubmittedCvs(submittedCvData);
-    });
-  }
+  document.getElementById("closeCvModalBtn")?.addEventListener("click", () => document.getElementById("cvModal").style.display = "none");
+  document.getElementById("add-rule-btn")?.addEventListener("click", () => {
+    const container = document.getElementById("rules-container");
+    container.appendChild(createRuleInput());
+    saveUserRules(getRulesFromUI());
+  });
 });
-
-// Re-expose required functions for bubbles
-window.renderSubmittedCvBubbles = renderSubmittedCvBubbles;

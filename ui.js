@@ -680,7 +680,29 @@ function renderSubmittedCvBubbles(allResults) {
 // ---------------------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", async () => {
   let chatHistory = []; 
-  
+
+  // --- 1. INITIALIZE UI ELEMENTS & TOGGLE STATE FIRST ---
+  // Ensure the toggle reflects the stored state immediately on load
+  const persistenceToggle = document.getElementById("persistence-toggle");
+  if (persistenceToggle) {
+    // Force boolean logic: stored 'true' becomes checked
+    persistenceToggle.checked = isPersistenceEnabled();
+    persistenceToggle.addEventListener("change", (e) => {
+      const isEnabled = e.target.checked;
+      setPersistence(isEnabled);
+      const msg = currentLang === 'ar' ? (isEnabled ? "تم تفعيل حفظ الجلسة." : "تم مسح البيانات المحفوظة.") : (isEnabled ? "Session saving enabled." : "Session data cleared.");
+      // If enabled, immediately save current state to storage
+      if (isEnabled) {
+        saveUserRules(getRulesFromUI());
+        saveChatHistory(chatHistory);
+        saveLastRecommendations(lastRecommendations);
+        saveSubmittedCvs(submittedCvData);
+      }
+      updateStatus(document.getElementById("upload-status"), msg, false, msg);
+    });
+  }
+
+  // --- 2. LOAD RULES & LANGUAGE ---
   const persistedRules = loadUserRules();
   const savedLang = loadLanguagePreference();
 
@@ -694,13 +716,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   initializeLanguage();
   clearChatHistoryDom(); 
   
+  // --- 3. LOAD CATALOGS (Async) ---
   await loadCertificateCatalog();
   await loadTrainingCoursesCatalog();
 
+  // --- 4. RESTORE SESSION DATA (if enabled) ---
   if (isPersistenceEnabled()) {
     chatHistory = loadChatHistory();
     lastRecommendations = loadLastRecommendations() || { candidates: [] };
-    if (chatHistory.length > 0) {
+    const chatContainer = document.getElementById("chat-messages");
+    if (chatContainer && chatHistory.length > 0) {
+      chatContainer.innerHTML = ""; // Clear default welcome first to avoid duplication
+      chatContainer.innerHTML = `<div class="message bot-message">${getUiText('welcomeMessage')}</div>`;
       chatHistory.forEach(msg => addMessage(msg.text, msg.isUser));
     }
     if (lastRecommendations?.candidates?.length > 0) {
@@ -711,6 +738,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  // --- 5. RESTORE CVs ---
   const savedCvs = loadSubmittedCvs();
   if (savedCvs && savedCvs.length > 0) {
     submittedCvData = savedCvs;
@@ -718,12 +746,109 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateGenerateButton(submittedCvData);
   }
   
+  const userInput = document.getElementById("user-input");
+  const sendButton = document.getElementById("send-button");
   const fileInput = document.getElementById("file-input");
   const cvUploadArea = document.getElementById("cv-upload-area");
   const uploadStatus = document.getElementById("upload-status");
   const generateBtn = document.getElementById("generate-recommendations-btn");
+  const addRuleBtn = document.getElementById("add-rule-btn");
 
+  if (addRuleBtn) {
+    addRuleBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const container = document.getElementById("rules-container");
+      if (container) {
+        const newInput = createRuleInput();
+        container.appendChild(newInput);
+        newInput.querySelector('input')?.focus();
+        saveUserRules(getRulesFromUI());
+      }
+    });
+  }
+
+  // Generate Recommendations
+  if (generateBtn) {
+    generateBtn.addEventListener("click", async () => {
+      const stopBtn = document.getElementById("stop-generation-btn");
+      if (stopBtn) stopBtn.classList.remove("hidden");
+      abortController = new AbortController();
+      isGenerating = true;
+      generateBtn.disabled = true;
+      generateBtn.innerHTML = '<div class="loader"></div>';
+      
+      const recContainer = document.getElementById("recommendations-container");
+      const resSection = document.getElementById("results-section");
+      recContainer.innerHTML = "";
+      resSection.classList.remove("hidden");
+      
+      const rules = getRulesFromUI();
+      const cvArray = submittedCvData.filter(cv => cv.selected);
+      
+      if (cvArray.length === 0) {
+        generateBtn.disabled = false;
+        generateBtn.innerHTML = getUiText('generateBtn');
+        if (stopBtn) stopBtn.classList.add("hidden");
+        isGenerating = false;
+        alert("Please select at least one CV");
+        return;
+      }
+
+      try {
+        allRecommendationsMap = {};
+        for (const cv of cvArray) {
+          if (abortController.signal.aborted) break;
+          const placeholder = document.createElement("div");
+          placeholder.className = "candidate-result";
+          placeholder.innerHTML = `<h3 class="candidate-name">${cv.name}</h3><div class="loader"></div>`;
+          recContainer.appendChild(placeholder);
+          
+          const result = await analyzeSingleCvWithAI(cv, rules, currentLang, 3, abortController.signal);
+          if (abortController.signal.aborted) { placeholder.remove(); break; }
+          const resultCard = createCandidateCard(result, currentLang);
+          recContainer.replaceChild(resultCard, placeholder);
+          
+          allRecommendationsMap[cv.name] = result;
+          lastRecommendations = { candidates: Object.values(allRecommendationsMap) };
+          saveLastRecommendations(lastRecommendations);
+        }
+      } finally {
+        generateBtn.disabled = false;
+        generateBtn.innerHTML = getUiText('generateBtn');
+        isGenerating = false;
+        if (stopBtn) stopBtn.classList.add("hidden");
+        updateDownloadButtonVisibility(lastRecommendations);
+      }
+    });
+  }
+
+  // Close Modals
+  document.getElementById("closeCvModalBtn")?.addEventListener("click", () => {
+    document.getElementById("cvModal").style.display = "none";
+  });
+  document.getElementById("closeRulesModal")?.addEventListener("click", () => {
+    document.getElementById("rulesModal").style.display = "none";
+  });
+
+  document.getElementById("submitCvReview")?.addEventListener("click", () => {
+    const activeTab = document.querySelector(".cv-tab.active");
+    if (activeTab) {
+        const name = activeTab.textContent;
+        const cv = submittedCvData.find(c => c.name === name);
+        if (cv) {
+            const updated = readCvFromDom(cv);
+            Object.assign(cv, updated);
+            renderSubmittedCvBubbles(submittedCvData);
+            saveSubmittedCvs(submittedCvData);
+        }
+    }
+    document.getElementById("cvModal").style.display = "none";
+  });
+  
   // File Processing
+  if (fileInput) fileInput.addEventListener("change", runFastFileProcessing);
+  if (cvUploadArea) cvUploadArea.addEventListener("click", () => fileInput.click());
+
   async function runFastFileProcessing() {
     if (!fileInput.files.length) return;
     const files = Array.from(fileInput.files);
@@ -737,6 +862,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           text: rawText, 
           isParsing: true, 
           selected: true,
+          // Initialize arrays to prevent UI crash before parsing finishes
           experience: [],
           education: [],
           certifications: [],
@@ -776,70 +902,114 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  if (fileInput) fileInput.addEventListener("change", runFastFileProcessing);
-  if (cvUploadArea) cvUploadArea.addEventListener("click", () => fileInput.click());
-
-  // Generate Logic
-  if (generateBtn) {
-    generateBtn.onclick = async () => {
-      abortController = new AbortController();
-      isGenerating = true;
-      generateBtn.disabled = true;
-      generateBtn.innerHTML = '<div class="loader"></div>';
-      
-      const recContainer = document.getElementById("recommendations-container");
-      const resSection = document.getElementById("results-section");
-      recContainer.innerHTML = "";
-      resSection.classList.remove("hidden");
-      
-      const rules = getRulesFromUI();
-      const cvArray = submittedCvData.filter(cv => cv.selected);
-      
-      try {
-        allRecommendationsMap = {};
-        for (const cv of cvArray) {
-          const placeholder = document.createElement("div");
-          placeholder.className = "candidate-result";
-          placeholder.innerHTML = `<h3>${cv.name}</h3><div class="loader"></div>`;
-          recContainer.appendChild(placeholder);
-          
-          const result = await analyzeSingleCvWithAI(cv, rules, currentLang, 3, abortController.signal);
-          const resultCard = createCandidateCard(result, currentLang);
-          recContainer.replaceChild(resultCard, placeholder);
-          
-          allRecommendationsMap[cv.name] = result;
-          lastRecommendations = { candidates: Object.values(allRecommendationsMap) };
-          saveLastRecommendations(lastRecommendations);
-        }
-      } finally {
+  // Stop Generation Button Logic
+  const stopGenerationBtn = document.getElementById("stop-generation-btn");
+  if (stopGenerationBtn) {
+    stopGenerationBtn.addEventListener("click", () => {
+      if (abortController && isGenerating) {
+        abortController.abort();
+        stopGenerationBtn.classList.add("hidden");
         generateBtn.disabled = false;
         generateBtn.innerHTML = getUiText('generateBtn');
         isGenerating = false;
-        updateDownloadButtonVisibility(lastRecommendations);
       }
-    };
+    });
   }
 
-  // Modals
-  document.getElementById("submitCvReview")?.addEventListener("click", () => {
-    const activeTab = document.querySelector(".cv-tab.active");
-    if (activeTab) {
-        const name = activeTab.textContent;
-        const cv = submittedCvData.find(c => c.name === name);
-        if (cv) {
-            const updated = readCvFromDom(cv);
-            Object.assign(cv, updated);
-            renderSubmittedCvBubbles(submittedCvData);
-            saveSubmittedCvs(submittedCvData);
-        }
+  // Chat Send Handler
+  async function handleSendMessage() {
+    const message = (userInput.value || "").trim();
+    if (!message) return;
+    addMessage(message, true);
+    const chatMessages = document.getElementById("chat-messages");
+    if (chatMessages) chatMessages.scrollTop = chatMessages.scrollHeight;
+    chatHistory.push({ text: message, isUser: true });
+    saveChatHistory(chatHistory);
+    userInput.value = "";
+    sendButton.disabled = true;
+    showTypingIndicator();
+    try {
+      const cvArrayForChat = submittedCvData.length > 0 ? submittedCvData : uploadedCvs;
+      const normalizedCvsForChat = cvArrayForChat.map((cv) => ({ name: cv.name, text: cv.text, structured: cv.structured || cv }));
+      const enhancedSystemPrompt = buildChatSystemPrompt(normalizedCvsForChat, currentLang);
+      const enhancedMessage = buildChatContextMessage(message, userRules, lastRecommendations, currentLang);
+      const formattedHistory = chatHistory.map((msg) => ({ role: msg.isUser ? "user" : "model", parts: [{ text: msg.text }] }));
+      const combinedPrompt = enhancedSystemPrompt ? `${enhancedSystemPrompt.trim()}\n\nUser message:\n${enhancedMessage}` : enhancedMessage;
+      const contents = [...formattedHistory, { role: "user", parts: [{ text: combinedPrompt }] }];
+      const proxyPayload = { prompt: combinedPrompt, history: contents };
+      
+      const botMessageDiv = document.createElement("div");
+      botMessageDiv.className = "message bot-message";
+      botMessageDiv.style.display = "none";
+      if (chatMessages) chatMessages.appendChild(botMessageDiv);
+      
+      let accumulatedText = "";
+      let hasContent = false;
+      
+      await callGeminiProxyStream(proxyPayload, (chunk) => {
+          accumulatedText += chunk;
+          if (botMessageDiv && accumulatedText.trim()) {
+              if (!hasContent) {
+                hasContent = true;
+                botMessageDiv.style.display = "";
+                hideTypingIndicator();
+              }
+              if (typeof marked !== "undefined") botMessageDiv.innerHTML = marked.parse(accumulatedText);
+              else botMessageDiv.innerHTML = accumulatedText.replace(/\n/g, "<br>");
+          }
+      }, () => {
+          if (hasContent && accumulatedText.trim()) {
+            chatHistory.push({ text: accumulatedText, isUser: false });
+            saveChatHistory(chatHistory);
+          }
+          hideTypingIndicator();
+          sendButton.disabled = false;
+      }, (err) => {
+          hideTypingIndicator();
+          sendButton.disabled = false;
+      });
+    } catch (err) {
+      hideTypingIndicator();
+      sendButton.disabled = false;
     }
-    document.getElementById("cvModal").style.display = "none";
-  });
+  }
+
+  if (sendButton) sendButton.addEventListener("click", handleSendMessage);
+  if (userInput) userInput.addEventListener("keypress", (e) => { if (e.key === "Enter") handleSendMessage(); });
+
+  // Maximize Buttons
+  const maximizeRulesBtn = document.getElementById("maximize-rules-btn");
+  const rulesModal = document.getElementById("rulesModal");
+  const closeRulesModalBtn = document.getElementById("closeRulesModal");
+  const rulesModalBody = document.getElementById("rules-modal-body");
+  const rulesModalAddContainer = document.getElementById("rules-modal-add-container");
+  const rulesModalFooter = document.getElementById("rules-modal-footer");
+  const sidebarSection = document.querySelector(".merged-section"); 
+
+  function toggleRulesModal(show) {
+    if (!rulesModal || !rulesModalBody) return;
+    if (show) {
+      rulesModalBody.appendChild(document.getElementById("rules-container"));
+      rulesModalAddContainer.appendChild(addRuleBtn);
+      rulesModalFooter.appendChild(generateBtn);
+      rulesModal.style.display = "flex";
+    } else {
+      rulesModal.style.display = "none";
+      if (sidebarSection) {
+        sidebarSection.appendChild(document.getElementById("rules-container"));
+        sidebarSection.appendChild(addRuleBtn);
+        sidebarSection.appendChild(generateBtn);
+      }
+    }
+  }
+  if (maximizeRulesBtn) maximizeRulesBtn.addEventListener("click", (e) => { e.preventDefault(); toggleRulesModal(true); });
+  if (closeRulesModalBtn) closeRulesModalBtn.addEventListener("click", () => toggleRulesModal(false));
+  const maximizeUploadedBtn = document.getElementById("maximize-uploaded-btn");
+  if (maximizeUploadedBtn) maximizeUploadedBtn.addEventListener("click", (e) => { e.preventDefault(); if (submittedCvData.length > 0) openCvModal(submittedCvData, 0); });
   
-  document.getElementById("closeCvModalBtn")?.addEventListener("click", () => document.getElementById("cvModal").style.display = "none");
-  document.getElementById("add-rule-btn")?.addEventListener("click", () => {
-    const container = document.getElementById("rules-container");
-    container.appendChild(createRuleInput());
-    saveUserRules(getRulesFromUI());
-  });
+  const downloadBtn = document.getElementById("download-recommendations-btn");
+  if (downloadBtn) downloadBtn.addEventListener("click", () => { downloadRecommendationsAsPDF(lastRecommendations, currentLang); });
 });
+
+// Re-expose required functions for bubbles
+window.renderSubmittedCvBubbles = renderSubmittedCvBubbles;

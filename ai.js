@@ -219,6 +219,10 @@ export function buildChatSystemPrompt(uploadedCvs) {
 
   return `${CHAT_SYSTEM_PROMPT_BASE.trim()}
 
+**Important formatting reminder:**
+- Never format responses as markdown or HTML tables.
+- Use paragraphs, bullet points, and numbered lists instead of tables for any comparisons or structured information.
+
 **Available Certifications Catalog:**
 ${catalogString}
 //Ghaith's change start
